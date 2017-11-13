@@ -1,0 +1,192 @@
+<!DOCTYPE HTML>
+<head>
+<title> Spielfeld </title>
+<link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css">
+</link>
+<link rel="stylesheet" href="schiffeVersenken.css">
+</link>
+<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+</link>
+</head>
+<body>
+<div class="container">
+	<table size="2" class="table table-bordered"  name="Spielfeld" ID="Spielfeld">
+		<thead>
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">A</th>
+				<th scope="col">B</th>
+				<th scope="col">C</th>
+				<th scope="col">D</th>
+				<th scope="col">E</th>
+				<th scope="col">F</th>
+				<th scope="col">G</th>
+				<th scope="col">H</th>
+				<th scope="col">I</th>
+				<th scope="col">J</th>
+				<th scope="col">#</th>
+			</tr>
+		</thead>
+	<tr ID="0">
+		<th scope="row">0</th>
+		<td ID="A0"></td>
+		<td ID="B0"></td>
+		<td ID="C0"></td>
+		<td ID="D0"></td>
+		<td ID="E0"></td>
+		<td ID="F0"></td>
+		<td ID="G0"></td>
+		<td ID="H0"></td>
+		<td ID="I0"></td>
+		<td ID="J0"></td>
+		<th scope="row">0</th>
+	</tr>	
+	<tr ID="1">
+		<th scope="row">1</th>
+		<td ID="A1"></td>
+		<td ID="B1"></td>
+		<td ID="C1"></td>
+		<td ID="D1"></td>
+		<td ID="E1"></td>
+		<td ID="F1"></td>
+		<td ID="G1"></td>
+		<td ID="H1"></td>
+		<td ID="I1"></td>
+		<td ID="J1"></td>
+		<th scope="row">1</th>
+	</tr>
+	<tr ID="2">
+		<th scope="row">2</th>
+		<td ID="A2"></td>
+		<td ID="B2"></td>
+		<td ID="C2"></td>
+		<td ID="D2"></td>
+		<td ID="E2"></td>
+		<td ID="F2"></td>
+		<td ID="G2"></td>
+		<td ID="H2"></td>
+		<td ID="I2"></td>
+		<td ID="J2"></td>
+		<th scope="row">2</th>
+	</tr>
+	<tr ID="3">
+		<th scope="row">3</th>
+		<td ID="A3"></td>
+		<td ID="B3"></td>
+		<td ID="C3"></td>
+		<td ID="D3"></td>
+		<td ID="E3"></td>
+		<td ID="F3"> </td>
+		<td ID="G3"></td>
+		<td ID="H3"></td>
+		<td ID="I3"></td>
+		<td ID="J3"></td>
+		<th scope="row">3</th>
+	</tr>
+	<tr ID="4">
+		<th scope="row">4</th>
+		<td ID="A4"></td>
+		<td ID="B4"></td>
+		<td ID="C4"></td>
+		<td ID="D4"></td>
+		<td ID="E4"></td>
+		<td ID="F4"></td>
+		<td ID="G4"></td>
+		<td ID="H4"></td>
+		<td ID="I4"></td>
+		<td ID="J4"></td>
+		<th scope="row">4</th>
+	</tr>
+	<tr ID="5">
+		<th scope="row">5</th>
+		<td ID="A5"></td>
+		<td ID="B5"></td>
+		<td ID="C5"></td>
+		<td ID="D5"></td>
+		<td ID="E5"></td>
+		<td ID="F5"></td>
+		<td ID="G5"></td>
+		<td ID="H5"></td>
+		<td ID="I5"></td>
+		<td ID="J5"></td>
+		<th scope="row">5</th>
+	</tr>
+	<tr ID="6">
+		<th scope="row">6</th>
+		<td ID="A6"></td>
+		<td ID="B6"></td>
+		<td ID="C6"></td>
+		<td ID="D6"></td>
+		<td ID="E6"></td>
+		<td ID="F6"></td>
+		<td ID="G6"></td>
+		<td ID="H6"></td>
+		<td ID="I6"></td>
+		<td ID="J6"></td>
+		<th scope="row">6</th>
+	</tr>
+	<tr ID="7">
+		<th scope="row">7</th>
+		<td ID="A7"></td>
+		<td ID="B7"></td>
+		<td ID="C7"></td>
+		<td ID="D7"></td>
+		<td ID="E7"></td>
+		<td ID="F7"></td>
+		<td ID="G7"></td>
+		<td ID="H7"></td>
+		<td ID="I7"></td>
+		<td ID="J7"></td>
+		<th scope="row">7</th>
+	</tr>
+	<tr ID="8">
+		<th scope="row">8</th>
+		<td ID="A8"></td>
+		<td ID="B8"></td>
+		<td ID="C8"></td>
+		<td ID="D8"></td>
+		<td ID="E8"></td>
+		<td ID="F8"></td>
+		<td ID="G8"></td>
+		<td ID="H8"></td>
+		<td ID="I8"></td>
+		<td ID="J8"></td>
+		<th scope="row">8</th>
+	</tr>
+	<tr ID="9">
+		<th scope="row">9</th>
+		<td ID="A9"></td>
+		<td ID="B9"></td>
+		<td ID="C9"></td>
+		<td ID="D9"></td>
+		<td ID="E9"></td>
+		<td ID="F9"></td>
+		<td ID="G9"></td>
+		<td ID="H9"></td>
+		<td ID="I9"></td>
+		<td ID="J9"></td>
+		<th scope="row">9</th>
+	</tr>
+		<thead>
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">A</th>
+				<th scope="col">B</th>
+				<th scope="col">C</th>
+				<th scope="col">D</th>
+				<th scope="col">E</th>
+				<th scope="col">F</th>
+				<th scope="col">G</th>
+				<th scope="col">H</th>
+				<th scope="col">I</th>
+				<th scope="col">J</th>
+				<th scope="col">#</th>
+			</tr>
+		</thead>
+	</table>
+</div>
+	<br>
+	<lato>
+	Dies ist Beispieltext.
+	</lato>
+</body>
