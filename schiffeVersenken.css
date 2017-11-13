@@ -9,3 +9,9 @@ th.table table-bordered {
 	width: 40px;
 	height: 40px;
 }
+#spielfeldEigen{
+    background-color: aliceblue;
+}
+#spielfeldGegner{
+   background-color: aliceblue; 
+}
