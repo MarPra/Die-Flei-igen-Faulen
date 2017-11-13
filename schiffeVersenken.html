@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang = "de">
-
+    
+    <head>     
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,16 +16,18 @@
    <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css ">
 
     <!-- Besondere Stile für diese Vorlage -->
-    <link href="style.css" rel="stylesheet">
+    <link href="schiffeVersenken.css" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css?family=Spectral+SC" rel="stylesheet"> 
     <!-- Unterstützung für Media Queries und HTML5-Elemente in IE8 über HTML5 shim und Respond.js -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  
-    
+    <![endif]-->  
+    </head>
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <body>
+     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -46,21 +49,19 @@
     </nav>
 
     <div class="container">
-      <div class="starter-template">
+      <div class="main-content">
         <h1>Schiffe versenken von "Die fleißigen Faulen"</h1>
-        <p class="lead">Verwende dieses Dokument, um ganz schnell mit einem neuen projekt loszulegen.<br> Alles was du bekommst, ist dieser Text und ein ansonsten sehr minimmales HTML-Dokument.</p>
-      </div>
         
           <!-- Trigger the modal with a button -->
-<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#spielerEingabe">Spielernamen ändern</button>
+          <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#spielerEingabe">Spielernamen ändern</button>
     
-    <!-- Modal -->
-<div id="spielerEingabe" class="modal fade" role="dialog">
-  <div class="modal-dialog">
+          <!-- Modal -->
+          <div id="spielerEingabe" class="modal fade" role="dialog">
+            <div class="modal-dialog">
 
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
+                <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <h4 class="modal-title">Spieler</h4>
       </div>
@@ -71,17 +72,373 @@
           <input id="spieler2" class="form-control" type="text" placeholder="Spieler2"/>
       </div>
       <div class="modal-footer">
-        <button onclick="save()" type="button" class="btn btn-save" data-dismiss="modal">Save</button>
+        <button onclick="save()" type="button" class="btn btn-save" data-dismiss="modal">Speichern</button>
       </div>
     </div>
 
   </div>
 </div>
-        <h2 id="headSp1"></h2>
-        <h2 id="headSp2"></h2>
+          <div class="row">
+            <div class="col-lg-6">
+                <h2 id="headSp1"></h2>
+                <table size="2" class="table table-bordered"  name="Spielfeld" ID="spielfeld1">
+		<thead>
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">A</th>
+				<th scope="col">B</th>
+				<th scope="col">C</th>
+				<th scope="col">D</th>
+				<th scope="col">E</th>
+				<th scope="col">F</th>
+				<th scope="col">G</th>
+				<th scope="col">H</th>
+				<th scope="col">I</th>
+				<th scope="col">J</th>
+				<th scope="col">#</th>
+			</tr>
+		</thead>
+	<tr ID="0">
+		<th scope="row">0</th>
+		<td ID="A0"></td>
+		<td ID="B0"></td>
+		<td ID="C0"></td>
+		<td ID="D0"></td>
+		<td ID="E0"></td>
+		<td ID="F0"></td>
+		<td ID="G0"></td>
+		<td ID="H0"></td>
+		<td ID="I0"></td>
+		<td ID="J0"></td>
+		<th scope="row">0</th>
+	</tr>	
+	<tr ID="1">
+		<th scope="row">1</th>
+		<td ID="A1"></td>
+		<td ID="B1"></td>
+		<td ID="C1"></td>
+		<td ID="D1"></td>
+		<td ID="E1"></td>
+		<td ID="F1"></td>
+		<td ID="G1"></td>
+		<td ID="H1"></td>
+		<td ID="I1"></td>
+		<td ID="J1"></td>
+		<th scope="row">1</th>
+	</tr>
+	<tr ID="2">
+		<th scope="row">2</th>
+		<td ID="A2"></td>
+		<td ID="B2"></td>
+		<td ID="C2"></td>
+		<td ID="D2"></td>
+		<td ID="E2"></td>
+		<td ID="F2"></td>
+		<td ID="G2"></td>
+		<td ID="H2"></td>
+		<td ID="I2"></td>
+		<td ID="J2"></td>
+		<th scope="row">2</th>
+	</tr>
+	<tr ID="3">
+		<th scope="row">3</th>
+		<td ID="A3"></td>
+		<td ID="B3"></td>
+		<td ID="C3"></td>
+		<td ID="D3"></td>
+		<td ID="E3"></td>
+		<td ID="F3"> </td>
+		<td ID="G3"></td>
+		<td ID="H3"></td>
+		<td ID="I3"></td>
+		<td ID="J3"></td>
+		<th scope="row">3</th>
+	</tr>
+	<tr ID="4">
+		<th scope="row">4</th>
+		<td ID="A4"></td>
+		<td ID="B4"></td>
+		<td ID="C4"></td>
+		<td ID="D4"></td>
+		<td ID="E4"></td>
+		<td ID="F4"></td>
+		<td ID="G4"></td>
+		<td ID="H4"></td>
+		<td ID="I4"></td>
+		<td ID="J4"></td>
+		<th scope="row">4</th>
+	</tr>
+	<tr ID="5">
+		<th scope="row">5</th>
+		<td ID="A5"></td>
+		<td ID="B5"></td>
+		<td ID="C5"></td>
+		<td ID="D5"></td>
+		<td ID="E5"></td>
+		<td ID="F5"></td>
+		<td ID="G5"></td>
+		<td ID="H5"></td>
+		<td ID="I5"></td>
+		<td ID="J5"></td>
+		<th scope="row">5</th>
+	</tr>
+	<tr ID="6">
+		<th scope="row">6</th>
+		<td ID="A6"></td>
+		<td ID="B6"></td>
+		<td ID="C6"></td>
+		<td ID="D6"></td>
+		<td ID="E6"></td>
+		<td ID="F6"></td>
+		<td ID="G6"></td>
+		<td ID="H6"></td>
+		<td ID="I6"></td>
+		<td ID="J6"></td>
+		<th scope="row">6</th>
+	</tr>
+	<tr ID="7">
+		<th scope="row">7</th>
+		<td ID="A7"></td>
+		<td ID="B7"></td>
+		<td ID="C7"></td>
+		<td ID="D7"></td>
+		<td ID="E7"></td>
+		<td ID="F7"></td>
+		<td ID="G7"></td>
+		<td ID="H7"></td>
+		<td ID="I7"></td>
+		<td ID="J7"></td>
+		<th scope="row">7</th>
+	</tr>
+	<tr ID="8">
+		<th scope="row">8</th>
+		<td ID="A8"></td>
+		<td ID="B8"></td>
+		<td ID="C8"></td>
+		<td ID="D8"></td>
+		<td ID="E8"></td>
+		<td ID="F8"></td>
+		<td ID="G8"></td>
+		<td ID="H8"></td>
+		<td ID="I8"></td>
+		<td ID="J8"></td>
+		<th scope="row">8</th>
+	</tr>
+	<tr ID="9">
+		<th scope="row">9</th>
+		<td ID="A9"></td>
+		<td ID="B9"></td>
+		<td ID="C9"></td>
+		<td ID="D9"></td>
+		<td ID="E9"></td>
+		<td ID="F9"></td>
+		<td ID="G9"></td>
+		<td ID="H9"></td>
+		<td ID="I9"></td>
+		<td ID="J9"></td>
+		<th scope="row">9</th>
+	</tr>
+		<thead>
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">A</th>
+				<th scope="col">B</th>
+				<th scope="col">C</th>
+				<th scope="col">D</th>
+				<th scope="col">E</th>
+				<th scope="col">F</th>
+				<th scope="col">G</th>
+				<th scope="col">H</th>
+				<th scope="col">I</th>
+				<th scope="col">J</th>
+				<th scope="col">#</th>
+			</tr>
+		</thead>
+	</table>
+            </div>
+            <div class="col-lg-6">
+                <h2 id="headSp2"></h2>
+                <table size="2" class="table table-bordered"  name="Spielfeld" ID="spielfeld2">
+		<thead>
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">A</th>
+				<th scope="col">B</th>
+				<th scope="col">C</th>
+				<th scope="col">D</th>
+				<th scope="col">E</th>
+				<th scope="col">F</th>
+				<th scope="col">G</th>
+				<th scope="col">H</th>
+				<th scope="col">I</th>
+				<th scope="col">J</th>
+				<th scope="col">#</th>
+			</tr>
+		</thead>
+	<tr ID="0">
+		<th scope="row">0</th>
+		<td ID="A0"></td>
+		<td ID="B0"></td>
+		<td ID="C0"></td>
+		<td ID="D0"></td>
+		<td ID="E0"></td>
+		<td ID="F0"></td>
+		<td ID="G0"></td>
+		<td ID="H0"></td>
+		<td ID="I0"></td>
+		<td ID="J0"></td>
+		<th scope="row">0</th>
+	</tr>	
+	<tr ID="1">
+		<th scope="row">1</th>
+		<td ID="A1"></td>
+		<td ID="B1"></td>
+		<td ID="C1"></td>
+		<td ID="D1"></td>
+		<td ID="E1"></td>
+		<td ID="F1"></td>
+		<td ID="G1"></td>
+		<td ID="H1"></td>
+		<td ID="I1"></td>
+		<td ID="J1"></td>
+		<th scope="row">1</th>
+	</tr>
+	<tr ID="2">
+		<th scope="row">2</th>
+		<td ID="A2"></td>
+		<td ID="B2"></td>
+		<td ID="C2"></td>
+		<td ID="D2"></td>
+		<td ID="E2"></td>
+		<td ID="F2"></td>
+		<td ID="G2"></td>
+		<td ID="H2"></td>
+		<td ID="I2"></td>
+		<td ID="J2"></td>
+		<th scope="row">2</th>
+	</tr>
+	<tr ID="3">
+		<th scope="row">3</th>
+		<td ID="A3"></td>
+		<td ID="B3"></td>
+		<td ID="C3"></td>
+		<td ID="D3"></td>
+		<td ID="E3"></td>
+		<td ID="F3"> </td>
+		<td ID="G3"></td>
+		<td ID="H3"></td>
+		<td ID="I3"></td>
+		<td ID="J3"></td>
+		<th scope="row">3</th>
+	</tr>
+	<tr ID="4">
+		<th scope="row">4</th>
+		<td ID="A4"></td>
+		<td ID="B4"></td>
+		<td ID="C4"></td>
+		<td ID="D4"></td>
+		<td ID="E4"></td>
+		<td ID="F4"></td>
+		<td ID="G4"></td>
+		<td ID="H4"></td>
+		<td ID="I4"></td>
+		<td ID="J4"></td>
+		<th scope="row">4</th>
+	</tr>
+	<tr ID="5">
+		<th scope="row">5</th>
+		<td ID="A5"></td>
+		<td ID="B5"></td>
+		<td ID="C5"></td>
+		<td ID="D5"></td>
+		<td ID="E5"></td>
+		<td ID="F5"></td>
+		<td ID="G5"></td>
+		<td ID="H5"></td>
+		<td ID="I5"></td>
+		<td ID="J5"></td>
+		<th scope="row">5</th>
+	</tr>
+	<tr ID="6">
+		<th scope="row">6</th>
+		<td ID="A6"></td>
+		<td ID="B6"></td>
+		<td ID="C6"></td>
+		<td ID="D6"></td>
+		<td ID="E6"></td>
+		<td ID="F6"></td>
+		<td ID="G6"></td>
+		<td ID="H6"></td>
+		<td ID="I6"></td>
+		<td ID="J6"></td>
+		<th scope="row">6</th>
+	</tr>
+	<tr ID="7">
+		<th scope="row">7</th>
+		<td ID="A7"></td>
+		<td ID="B7"></td>
+		<td ID="C7"></td>
+		<td ID="D7"></td>
+		<td ID="E7"></td>
+		<td ID="F7"></td>
+		<td ID="G7"></td>
+		<td ID="H7"></td>
+		<td ID="I7"></td>
+		<td ID="J7"></td>
+		<th scope="row">7</th>
+	</tr>
+	<tr ID="8">
+		<th scope="row">8</th>
+		<td ID="A8"></td>
+		<td ID="B8"></td>
+		<td ID="C8"></td>
+		<td ID="D8"></td>
+		<td ID="E8"></td>
+		<td ID="F8"></td>
+		<td ID="G8"></td>
+		<td ID="H8"></td>
+		<td ID="I8"></td>
+		<td ID="J8"></td>
+		<th scope="row">8</th>
+	</tr>
+	<tr ID="9">
+		<th scope="row">9</th>
+		<td ID="A9"></td>
+		<td ID="B9"></td>
+		<td ID="C9"></td>
+		<td ID="D9"></td>
+		<td ID="E9"></td>
+		<td ID="F9"></td>
+		<td ID="G9"></td>
+		<td ID="H9"></td>
+		<td ID="I9"></td>
+		<td ID="J9"></td>
+		<th scope="row">9</th>
+	</tr>
+		<thead>
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">A</th>
+				<th scope="col">B</th>
+				<th scope="col">C</th>
+				<th scope="col">D</th>
+				<th scope="col">E</th>
+				<th scope="col">F</th>
+				<th scope="col">G</th>
+				<th scope="col">H</th>
+				<th scope="col">I</th>
+				<th scope="col">J</th>
+				<th scope="col">#</th>
+			</tr>
+		</thead>
+	</table>
+            </div>
+        </div>
+    </div>
+    </div><!-- /.container -->  
+    </body>
 
-    </div><!-- /.container -->
-
+   
     <!-- Bootstrap-JavaScript
     ================================================== -->
     <!-- Am Ende des Dokuments platziert, damit Seiten schneller laden -->
@@ -89,7 +446,6 @@
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <!-- IE10-Anzeigefenster-Hack für Fehler auf Surface und Desktop-Windows-8 -->
-    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
     <script type="text/javascript">
     $(document).ready(function(){
         $("#spielerEingabe").modal('show');
