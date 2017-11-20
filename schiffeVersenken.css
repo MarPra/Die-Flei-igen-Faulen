@@ -5,10 +5,12 @@
     padding-top: 100px;
 }
 
-th.table table-bordered {
-	width: 40px;
+.table-bordered thead tr th {
+	width: calc(100%/12);
 	height: 40px;
+	min-width: 40px;
 }
+
 #spielfeldEigen{
     background-color: aliceblue;
 }
