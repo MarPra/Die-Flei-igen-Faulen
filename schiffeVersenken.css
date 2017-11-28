@@ -10,10 +10,12 @@
 	height: 40px;
 	min-width: 40px;
 }
-
+.table-bordered * {
+	text-align: center;
+}
 #spielfeldEigen{
     background-color: aliceblue;
 }
 #spielfeldGegner{
-   background-color: aliceblue; 
+   background-color: #F5EDA6; 
 }
