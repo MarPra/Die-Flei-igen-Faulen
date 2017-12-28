@@ -1,0 +1,71 @@
+Benötigte Attribute:
+Byte spielfeldEigen[10][10]; // Mit Bewertungen 0 := freies, besetzbares Feld, 1 := durch Schiff besetztes Feld, 2:= freies, nicht besetzbares Feld
+ListeDerZuPlatzierendenSchiffe; // Jedes Element/Schiff aus dieser Liste besitzt einen Wert, und zwar seine Länge
+//Darstellungsoption 1: Jedes Schiff sollte wie ein Individuum vorkommen -> Bsp einer Liste: {Kreuzer(6), Kreuzer(6), U-Boot(2)} Es gibt also 2 Kreuzer und 1 U-Boot. Kreuzer haben die Länge 6 und U-Boote die Länge 2.
+//Darstellungsoption 2: Jedes Schiff wird wiederum durch eine Gruppe erfasst -> Bsp einer solchen Liste: {Kreuzer(6, 2), U-Boot(2, 3)} Es gibt also 2 Kreuzer und 3 U-Boote. Kreuzer haben die Länge 6 und U-Boote die Länge 2.
+
+PlatziereSchiffe {
+Ist ListeDerZuPlatzierendenSchiffe leer? 
+	Ja => Ende;
+Wähle ein zufälliges Schiff S aus ListeDerZuPlatzierendenSchiffe;
+
+// Hiermit wird bestimmt, ob das Schiff horizontal oder vertikal positioniert wird.
+Wähle zufällig zwischen: horizontal, vertikal;
+
+A1)
+Wähle ein zufälliges Feld mit Koordinaten X (horizontal),Y (vertikal) aus spielfeldEigen;
+Prüfe: 
+Wenn horizontal: 
+	Ist X+ S.Länge > 9? // Würde das Schiff also über den Spielfeldrand hinausragen?
+		Ja => PlatziereSchiffe;
+		Ist mindestens eins der Felder spielfeldEigen[X][Y] bis spielfeldEigen[X+S.Länge][Y] ungültig? // zähle X hoch, nicht Y
+			Ja => PlatziereSchiffe;
+Wenn vertikal: 
+	Ist Y+ S.Länge > 9?
+		Ja => PlatziereSchiffe;  // Würde das Schiff also über den Spielfeldrand hinausragen?
+		Ist mindestens eins der Felder spielfeldEigen[X][Y] bis spielfeldEigen[X][Y+S.Länge] ungültig? // zähle Y hoch, nicht X
+			Ja => PlatziereSchiffe;
+	
+
+	
+	
+	
+	
+A2) Optimierung von A1
+
+Wenn horizontal:
+Wähle ein zufälliges Feld mit Koordinaten X (horizontal) von 0 bis 10-S.Länge,Y (vertikal) aus spielfeldEigen;
+Ist mindestens eins der Felder spielfeldEigen[X][Y] bis spielfeldEigen[X+S.Länge][Y] ungültig? // zähle X hoch, nicht Y
+	Ja => PlatziereSchiffe;
+Wenn vertikal:
+Wähle ein zufälliges Feld mit Koordinaten X (horizontal),Y (vertikal) von 0 bis 10-S.Länge aus spielfeldEigen;
+Ist mindestens eins der Felder spielfeldEigen[X][Y] bis spielfeldEigen[X][Y+S.Länge] ungültig? // zähle Y hoch, nicht X
+	Ja => PlatziereSchiffe;
+
+
+
+B)
+// Platziere S auf X, Y. Dies geschieht durch folgenden code
+Markiere folgende Spielfelder als besetzt durch ein Schiff:
+
+Wenn horizontal:
+spielfeldEigen[X][Y] bis spielfeldEigen[X+S.Länge][Y] // zähle X hoch, nicht Y
+Wenn vertikal:
+spielfeldEigen[X][Y] bis spielfeldEigen[X][Y+S.Länge] // zähle Y hoch, nicht X
+
+
+C)
+Markiere folgende Spielfelder als ungültig für weitere Schiffe:
+
+Wenn horizontal:
+spielfeldEigen[X-1][Y-1] bis spielfeldEigen[X+S.Länge+1][Y-1] // zähle X hoch, nicht Y
+spielfeldEigen[X-1][Y] bis spielfeldEigen[X+S.Länge+1][Y] // zähle X hoch, nicht Y
+spielfeldEigen[X-1][Y+1] bis SpielfeldEigen[X+S.Länge+1][Y+1] // zähle X hoch, nicht Y
+Wenn vertikal:
+spielfeldEigen[X-1][Y-1] bis spielfeldEigen[X-1][Y+S.Länge+1] // zähle Y hoch, nicht X
+spielfeldEigen[X][Y-1] bis spielfeldEigen[X][Y+S.Länge+1] // zähle Y hoch, nicht X
+spielfeldEigen[X+1][Y-1] bis spielfeldEigen[X+1][Y+S.Länge+1] // zähle Y hoch, nicht X
+
+
+Entferne S aus ListeDerZuPlatzierendenSchiffe;
+}
