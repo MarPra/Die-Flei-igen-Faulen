@@ -71,7 +71,7 @@ spielfeldEigen[X+1][Y-1] bis spielfeldEigen[X+1][Y+S.Länge+1] // zähle Y hoch,
 // Falls Ja => Schiff ist noch nicht versenkt
 // Falls Nein => Schiff ist vielleicht versenkt
 // Wenn ein Feld mit Wert 1 getroffen ist, sollte dieser Wert umändern zu 3:= Feld auf dem ein getroffenes Schiff ist.
-// Wenn die Nachbarfelder einer Linie bestehend aus Feldern mit Werten 3 nur Werte ungleich 1 besitzen, dann ist ein Schiff versenkt worden.
+// Genau dann, wenn die Nachbarfelder einer Linie bestehend aus Feldern mit Werten 3 nur Werte ungleich 1 besitzen, dann ist ein Schiff versenkt worden.
 Entferne S aus ListeDerZuPlatzierendenSchiffe;
 }
 // Es sollte also folgende Feldbewertungen geben: 0 := freies, besetzbares Feld, 1 := durch Schiff besetztes Feld, 2:= freies, nicht besetzbares Feld,  3:= Feld auf dem ein getroffenes Schiff ist, 4:= Freies Feld, das beschossen wurde.
