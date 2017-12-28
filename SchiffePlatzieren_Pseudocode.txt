@@ -17,12 +17,12 @@ Wähle ein zufälliges Feld mit Koordinaten X (horizontal),Y (vertikal) aus spie
 Prüfe: 
 Wenn horizontal: 
 	Ist X+ S.Länge > 9? // Würde das Schiff also über den Spielfeldrand hinausragen?
-		Ja => PlatziereSchiffe;
+		Ja => PlatziereSchiffe; // starte von vorn
 		Ist mindestens eins der Felder spielfeldEigen[X][Y] bis spielfeldEigen[X+S.Länge][Y] ungültig? // zähle X hoch, nicht Y
 			Ja => PlatziereSchiffe;
 Wenn vertikal: 
-	Ist Y+ S.Länge > 9?
-		Ja => PlatziereSchiffe;  // Würde das Schiff also über den Spielfeldrand hinausragen?
+	Ist Y+ S.Länge > 9? 
+		Ja => PlatziereSchiffe;
 		Ist mindestens eins der Felder spielfeldEigen[X][Y] bis spielfeldEigen[X][Y+S.Länge] ungültig? // zähle Y hoch, nicht X
 			Ja => PlatziereSchiffe;
 	
