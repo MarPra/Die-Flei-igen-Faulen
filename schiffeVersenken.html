@@ -62,24 +62,60 @@
               <!-- Modal content-->
           <div class="modal-content">
             <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal">&times;</button>
-      <h4 class="modal-title">Spieler</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Spieler</h4>
+            </div>
+          <div class="modal-body">
+            <p>Bitte gib deine Spielernamen ein:</p>
+            <input id="spieler1" class="form-control" type="text" placeholder="Spieler1"/>
+            <br>
+            <input id="spieler2" class="form-control" type="text" placeholder="Spieler2"/>
+          </div>
+          <div class="modal-footer">
+            <button onclick="saveNames()" type="button" class="btn btn-save" data-dismiss="modal">Speichern</button>
+          </div>
+        </div>
+        </div>
       </div>
+      <!-- Modal -->
+      <div id="DisconnectedModal" class="modal fade" role="dialog" >
+        <div class="modal-dialog">
+
+          <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Disconnected!</h4>
+        </div>
       <div class="modal-body">
-      <p>Bitte gib deine Spielernamen ein:</p>
-        <input id="spieler1" class="form-control" type="text" placeholder="Spieler1"/>
-        <br>
-        <input id="spieler2" class="form-control" type="text" placeholder="Spieler2"/>
-
-      </div>
+        <p>Bitte überprüfen Sie Ihre Internetverbindung</p>
       <div class="modal-footer">
-      <button onclick="saveNames()" type="button" class="btn btn-save" data-dismiss="modal">Speichern</button>
+      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
       </div>
+      </div>
+      </div>
+    </div>
 
+      <div id="WinnerModal" class="modal fade" role="dialog" >
+        <div class="modal-dialog">
 
-  </div>
-</div>
+          <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Game over!</h4>
+        </div>
+      <div class="modal-body">
+        <p>Der Gewinner ist: {winner}</p>
+      <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+      </div>
+      </div>
+      </div>
+    </div>
+
   <div id="Highscore-Container" class="row">
     <h3>Highscore</h3>
     <span id="Highscore"></span>

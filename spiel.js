@@ -29,25 +29,62 @@ function showPlayerModal(){
    $("#spielerEingabe").modal('show');
 }
 
-function showGameOverModal(){
-
+function showWinnerModal(winner){
+  $("#WinnerModal").modal('show');
 }
 
-function showWinnerModal(winner){
-
+function showDisconnectedModal(){
+   $("#DisconnectedModal").modal('show');
 }
 
 //----------------------------SPIELLOGIK----------------------------------------
 
+function shoot(posX, posY){
+
+}
+
+
 function setShip(schiff, x, y, orientierung){
   for(let i = 0; i < schiff.länge; i++){
     if(orientierung == HORIZONTAL){
-      mySpielfeld[x][y+i] = 1;
+      if(y+i < 10){
+          mySpielfeld[x][y+i] = 1;
+      }else{
+        mySpielfeld[x][y-i] = 1;
+      }
     }else{
+      if(x+i < 10){
         mySpielfeld[x+i][y] = 1;
+      }else{
+        mySpielfeld[x-i][y] = 1;
+      }
     }
   }
 }
+
+/*function felderNebenSchiffFrei(schiff, x, y, orientierung){
+  if(orientierung == HORIZONTAL){
+    for(let i = 0; i< schiff.länge; i++){
+      // Prüfung oberhalb
+      if(mySpielfeld[x][y-1] == 1 && i == 0 && y !< 0){
+        return false;
+      }
+      // Prüfung oberhalb rechts
+      if(mySpielfeld[x+1][y-1] == 1 && x+1 !> 10 && y !< 0){
+        return false;
+      }
+      // Prüfung oben links
+      if(mySpielfeld[x-1][y-1] == 1 && x-1 ! && y !< 0){
+        return false;
+      }
+  }
+
+  for(let i = 0; i< schiff.länge; i++){
+    if(mySpielfeld[x][y])
+
+  }
+  return true;
+}*/
 
 // TODO: Load Highscore from REST-API
 function showHighscore(){
