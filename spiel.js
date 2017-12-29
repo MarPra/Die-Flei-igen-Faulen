@@ -1,5 +1,7 @@
 //----------------------------GLOBALE VARIABLEN---------------------------------
-let shotsCounter = 0;
+let shootsCounter = 0;
+let ROWS = 10;
+let COLUMNS = 10;
 let tableHeadArray = ["#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 let mySpielfeld = createField();
 let otherSpielfeld = createField();
@@ -49,10 +51,15 @@ function createField (fieldname){
 
 
 function shoot(posX, posY){
+  shootsCounter++;
   console.log(posX, posY);
   if(otherSpielfeld[posX][posY] == 1){
       console.log("Treffer");
-      showShoot(posX, posY);
+      otherSpielfeld[posX][posY] = 2;
+      update(otherSpielfeld, document.getElementById('spielfeldGegner'));
+  }else{
+    otherSpielfeld[posX][posY] = -1;
+    update(otherSpielfeld, document.getElementById('spielfeldGegner'));
   }
 }
 
@@ -62,88 +69,132 @@ function setShip(field, schiff){
   var y = getRandomInt(0,9);
   var orientierung =  getRandomInt(0,1);
     if(orientierung == HORIZONTAL){
-      var counterY = 0;
       for(let i = 0; i < schiff.länge; i++){
-      if(y+i < 10){
+      if(y+i < COLUMNS){
+        if(isValidPos(field, x, y+i, orientierung, i)){
           field[x][y+i] = 1;
+          return true;
+        }
+          return false;
       }else{
-        field[x][y-i] = 1;
-        counterY = i;
+        if(isValidPos(field, x, y-i, orientierung, i)){
+          field[x][y-i] = 1;
+          return true;
+        }
+        return false;
       }
     }
-    var startPosY = startPosShip(counterY);
-    return isValidPos(field, x, startPosY);
     }
       //Vertical
     else{
-      var counterX = 0;
       for(let i = 0; i < schiff.länge; i++){
-        if(x+i <10){
-          field[x+i][y] = 1;
+        if(x+i <ROWS){
+          if(isValidPos(field, x+i, y, orientierung, i)){
+            field[x+i][y] = 1;
+            return true;
+          }
+          return false;
         }else{
-          field[x-i][y] = 1;
-          counterX = i;
+          if(isValidPos(field, x-i, y, orientierung, i)){
+            field[x-i][y] = 1;
+            return true;
+          }
+          return false;
         }
       }
-      var startPosX = startPosShip(counterX);
-      return isValidPos(field, startPosX, y);
     }
 }
 
-// TODO: Algorithmus für das checken der Schiffe verfeinern funktioniert nicht immer
-function isValidPos(field, schiff, x, y, orientierung){
+function isValidPos(field, x, y, orientierung, counter){
   var isValid = true;
   if(orientierung == HORIZONTAL){
-    for(let i = 0; i < schiff.länge; i++){
-      if(i == 0){
-        // oberhalb checken
-        if(field[x][y-1] == 0 && field[x-1][y-1] == 0 && field[x+1][y-1] == 0 &&
-        field[x-1][y+i] == 0 && field[x+1][y+i] == 0){
-          isValid = true;
+    if(counter == 0){
+      // aktuelle Position
+      if(field[x][y] == 0){
+        // oben links
+        if(typeof field[x-1][y-1] == "undefined" || field[x-1][y-1] == 0){
+          // oben mitte
+          if(typeof field[x][y-1] == "undefined" || field[x][y-1] == 0){
+            // oben rechts
+            if(typeof field[x+1][y-1] == "undefined" || field[x+1][y-1] == 0){
+              // links daneben
+              if(typeof field[x-1][y] == "undefined" || field[x-1][y] == 0){
+                // rechts daneben
+                if(typeof field[x+1][y] == "undefined" || field[x+1][y] == 0){
+                  // darunter
+                  if(typeof field[x][y+1] == "undefined" || field[x][y+1] == 0){
+                    return true;
+                  }
+                }
+              }
+            }
+          }
+        }
         }
         return false;
-        // unterhalbe checken
-      }else if (i == schiff.länge -1){
-        if(field[x][y+i+1] == 0 && field[x-1][y+i] == 0 && field[x+1][y+i] == 0 &&
-        field[x-1][y+i] == 0 && field[x+1][y-i] == 0){
-            isValid = true;
-        }
-        return false;
-        // seitlich checken
       } else{
-        if(field[x-1][y+i] == 0 && field[x+1][y+i] == 0){
-            isValid = true;
-        }
-        return false;
-      }
-    }
-  }
-// Vertical
-  else{
-      for(let i = 0; i < schiff.länge; i++){
-  // links checken
-        if(i == 0){
-          if(field[x-1][y] == 0 && field[x-1][y-1] == 0 && field[x-1][y+1] == 0 &&
-          field[x+i][y-1] == 0 && field[x+1][y+1] == 0){
-            isValid = true;
+        // aktuelle Position
+          if(field[x][y] == 0){
+            //links daneben
+            if(typeof field[x-1][y] == "undefined" || field[x-1][y] == 0){
+              // rechts daneben
+              if(typeof field[x+1][y] == "undefined" || field[x+1][y] == 0){
+                //links darunter
+                if(typeof field[x-1][y+1] == "undefined" || field[x-1][y+1] == 0){
+                  // darunter
+                  if(typeof field[x][y+1] == "undefined" || field[x][y+1] == 0){
+                    //recht darunter
+                    if(typeof field[x+1][y+1] == "undefined" || field[x+1][y+1] == 0){
+                      return true;
+                    }
+                  }
+                }
+              }
+            }
           }
           return false;
-          // rechts checken
-        }else if (i == schiff.länge -1){
-          if(field[x+i+1][y] == 0 && field[x+i+1][y-1] == 0 && field[x+i+1][y+1] == 0 &&
-          field[x+i][y-1] == 0 && field[x+1][y+1] == 0){
-            isValid = true;
-        }
-        return false;
-      } else{
-        if(field[x+i][y-1] == 0 && field[x+1][y+1] == 0){
-          isValid = true;
-        }
-        return false;
       }
+    }
+    // Vertical
+  else{
+      if(counter == 0){
+        //links unten daneben
+        if(typeof field[x-1][y+1] == "undefined" || field[x-1][y+1] == 0){
+          // links daneben
+          if(typeof field[x-1][y] == "undefined" || field[x-1][y] == 0){
+            // rechts oben daneben
+            if(typeof field[x-1][y-1] == "undefined" || field[x-1][y-1] == 0){
+              // unten
+              if(typeof field[x][y+1] == "undefined" || field[x][y+1] == 0){
+                // oben
+                if(typeof field[x][y-1] == "undefined" || field[x][y-1] == 0){
+                  return true;
+                }
+              }
+            }
+          }
+        }
+        return false;
+      }else{
+        // oben
+        if(typeof field[x][y-1] == "undefined" || field[x][y-1] == 0){
+          // unten
+          if(typeof field[x][y+1] == "undefined" || field[x][y+1] == 0){
+            // rechts unten daneben
+            if(typeof field[x+1][y+1] == "undefined" ||  field[x+1][y+1] == 0){
+              // rechts daneben
+              if(typeof field[x+1][y] == "undefined" ||  field[x+1][y] == 0){
+                // rechts oben daneben
+                if(typeof field[x+1][y-1] == "undefined" ||  field[x+1][y-1] == 0){
+                  return true;
+                }
+              }
+            }
+          }
+        }
+        return false;
       }
   }
-  return isValid;
 }
 
 function startPosShip(counter, firstPos){
@@ -160,9 +211,6 @@ function setRandomShips(field){
       }
     }
   }
-  //var table = document.getElementById("spielfeldEigen");
-  //update(field, table);
-
 }
 
 function getRandomInt(min, max) {
@@ -172,9 +220,9 @@ function getRandomInt(min, max) {
 //----------------------------GAMEANZEIGE---------------------------------------
 function initalize(){
   var spielfeldEigen = document.getElementById("spielfeldEigen");
-   renderTable(spielfeldEigen, 10, 10);
+  // renderTable(spielfeldEigen, 10, 10);
    var spielfeldGegner = document.getElementById("spielfeldGegner");
-   renderTable(spielfeldGegner, 10, 10);
+   //renderTable(spielfeldGegner, 10, 10);
    showHighscore();
    showPlayerModal();
    setRandomShips(mySpielfeld);
@@ -188,33 +236,43 @@ function update (field, table){
   table.innerHTML = "";
   renderTableHead(table);
   if(field == mySpielfeld){
-    for (var row = 0; row < 10; row++) {
+    for (var row = 0; row < ROWS; row++) {
       var rowElement = document.createElement("tr");
       var rowHead = document.createElement('th');
       rowHead.setAttribute("scope", "row");
       rowHead.innerHTML = row;
       rowElement.appendChild(rowHead);
       table.appendChild(rowElement);
-        for (var column = 0; column < 10; column++) {
+        for (var column = 0; column < COLUMNS; column++) {
             var columnElement = document.createElement('td');
             if(field[row][column] == 1){
               columnElement.setAttribute("class", "Schiff");
               columnElement.setAttribute("style", "border: 3px solid blue;")
             }
+            if(field[row][column] == 2){
+              columnElement.setAttribute("style", "border: 3px solid red;")
+            }
               rowElement.appendChild(columnElement);
         }
       }
   } else{
-    for (var row = 0; row < 10; row++) {
+    for (var row = 0; row < ROWS; row++) {
       var rowElement = document.createElement("tr");
       var rowHead = document.createElement('th');
       rowHead.setAttribute("scope", "row");
       rowHead.innerHTML = row;
       rowElement.appendChild(rowHead);
       table.appendChild(rowElement);
-        for (var column = 0; column < 10; column++) {
+        for (var column = 0; column < COLUMNS; column++) {
             var columnElement = document.createElement('td');
-            columnElement.setAttribute("onclick" , "shoot(" + row +"," + column + ")");
+            if(field[row][column] == 2){
+              columnElement.setAttribute("style" , "border: 3px solid green;");
+            } else if(field[row][column] == -1){
+              columnElement.innerHTML = "-";
+            }
+            else{
+              columnElement.setAttribute("onclick" , "shoot("+ row +"," + column + ")");
+            }
             rowElement.appendChild(columnElement);
   }
 }
@@ -263,26 +321,4 @@ function saveNames(){
 function showHighscore(){
   var highscore = document.getElementById("Highscore");
   highscore.innerHTML = "Hier wird der Highscore geladen";
-}
-
-function showShoot(posX, posY){
-  var table = document.getElementById("spielfeldGegner");
-  table.innerHTML = "";
-  renderTableHead(table);
-  for (var row = 0; row < 10; row++) {
-    var rowElement = document.createElement("tr");
-    var rowHead = document.createElement('th');
-    rowHead.setAttribute("scope", "row");
-    rowHead.innerHTML = row;
-    rowElement.appendChild(rowHead);
-    table.appendChild(rowElement);
-      for (var column = 0; column < 10; column++) {
-          var columnElement = document.createElement('td');
-          if(column === posY && row === posX){
-            columnElement.setAttribute("style" , "border: 3px solid green;");
-          }
-          columnElement.setAttribute("onclick" , "shoot(" + row +"," + column + ")");
-          rowElement.appendChild(columnElement);
-}
-}
 }
