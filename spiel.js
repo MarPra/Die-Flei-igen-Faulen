@@ -9,14 +9,14 @@ console.log(mySpielfeld);
 console.log(otherSpielfeld);
 
 let schiffe = [
-  {name: "Schlachtschiff" , länge: 5, anzahl: 1},
-  {name: "Kreuzer" , länge: 4 , anzahl: 2},
-  {name: "Zerstörer" , länge: 3 , anzahl: 3},
-  {name: "U-Boot" , länge: 2 , anzahl: 4}
+  {name: "Schlachtschiff" , length: 5, anzahl: 1},
+  {name: "Kreuzer" , length: 4 , anzahl: 2},
+  {name: "Zerstörer" , length: 3 , anzahl: 3},
+  {name: "U-Boot" , length: 2 , anzahl: 4}
 ];
 
 const HORIZONTAL = 1;
-const VERTIKAL = 0;
+const VERTICAL = 0;
 
 //----------------------------MODALS--------------------------------------------
 function showPlayerModal(){
@@ -33,6 +33,12 @@ function showDisconnectedModal(){
 
 //----------------------------SPIELLOGIK----------------------------------------
 
+	/* 
+	Ship placement
+	
+	Ships are placed from left to right, in detail from x to x + ship.length 
+	or from top to bottom, in detail from y to y + ship.length
+	*/
 
 function createField (fieldname){
   return [
@@ -64,20 +70,20 @@ function shoot(posX, posY){
 }
 
 
-function setShip(field, schiff){
+function setShip(field, ship){
   var x = getRandomInt(0,9);
   var y = getRandomInt(0,9);
-  var orientierung =  getRandomInt(0,1);
-    if(orientierung == HORIZONTAL){
-      for(let i = 0; i < schiff.länge; i++){
+  var orientation =  getRandomInt(0,1);
+    if(orientation == HORIZONTAL){
+      for(let i = 0; i < ship.length; i++){
       if(y+i < COLUMNS){
-        if(isValidPos(field, x, y+i, orientierung, i)){
+        if(isValidPos(field, x, y+i, orientation, i)){
           field[x][y+i] = 1;
           return true;
         }
           return false;
       }else{
-        if(isValidPos(field, x, y-i, orientierung, i)){
+        if(isValidPos(field, x, y-i, orientation, i)){
           field[x][y-i] = 1;
           return true;
         }
@@ -87,15 +93,15 @@ function setShip(field, schiff){
     }
       //Vertical
     else{
-      for(let i = 0; i < schiff.länge; i++){
+      for(let i = 0; i < ship.length; i++){
         if(x+i <ROWS){
-          if(isValidPos(field, x+i, y, orientierung, i)){
+          if(isValidPos(field, x+i, y, orientation, i)){
             field[x+i][y] = 1;
             return true;
           }
           return false;
         }else{
-          if(isValidPos(field, x-i, y, orientierung, i)){
+          if(isValidPos(field, x-i, y, orientation, i)){
             field[x-i][y] = 1;
             return true;
           }
@@ -105,25 +111,20 @@ function setShip(field, schiff){
     }
 }
 
-function isValidPos(field, x, y, orientierung, counter){
-// TODO: Rename orientierung to orientation
-// TODO: Rename VERTIKAL to VERTICAL
-// TODO: Rename schiff to ship
-// TODO: Rename schiff.länge to schiff.length / ship.length
-function isValidPos(field, schiff, x, y, orientierung){
-	
-	if(orientierung == HORIZONTAL && x + schiff.length <= 9){
+function isValidPos(field, ship, x, y, orientation){
+
+	if(orientation == HORIZONTAL && x + ship.length <= 9){
 	// Is the horizontal border not overstepped?
-		for(let i = x; i < x + schiff.length; i++) {
+		for(let i = x; i < x + ship.length; i++) {
 		// Check for every field where the ship would be placed whether that placement is valid
 			if(field[i][y] != 0) {
 				return false;
 			}
 		}
 		return true;
-	} else if (orientierung == VERTIKAL && y + schiff.length <= 9){
+	} else if (orientation == VERTICAL && y + ship.length <= 9){
 	// Is the vertical border not overstepped?
-		for(let i = y; i < y + schiff.length; i++) {
+		for(let i = y; i < y + ship.length; i++) {
 		// Check for every field where the ship would be placed whether that placement is valid
 			if(field[x][i] != 0) {
 				return false;
@@ -134,8 +135,9 @@ function isValidPos(field, schiff, x, y, orientierung){
 	return false;
 }
 	/*
+function isValidPos(field, x, y, orientation, counter){
   var isValid = true;
-  if(orientierung == HORIZONTAL){
+  if(orientation == HORIZONTAL){
     if(counter == 0){
       // aktuelle Position
       if(field[x][y] == 0){
@@ -223,9 +225,9 @@ function isValidPos(field, schiff, x, y, orientierung){
         return false;
       }
   }
-  */
+ 
 }
-
+ */
 function startPosShip(counter, firstPos){
   return firstPos - counter;
 }
