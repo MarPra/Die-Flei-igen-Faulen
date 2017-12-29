@@ -116,7 +116,7 @@ function isValidPos(field, schiff, x, y, orientierung){
 	// Is the horizontal border not overstepped?
 		for(let i = x; i < x + schiff.length; i++) {
 		// Check for every field where the ship would be placed whether that placement is valid
-			if(field[i][y] != 1) {
+			if(field[i][y] != 0) {
 				return false;
 			}
 		}
@@ -125,7 +125,7 @@ function isValidPos(field, schiff, x, y, orientierung){
 	// Is the vertical border not overstepped?
 		for(let i = y; i < y + schiff.length; i++) {
 		// Check for every field where the ship would be placed whether that placement is valid
-			if(field[x][i] != 1) {
+			if(field[x][i] != 0) {
 				return false;
 			}
 		}
