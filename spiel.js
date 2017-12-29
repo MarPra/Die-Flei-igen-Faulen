@@ -9,10 +9,10 @@ console.log(mySpielfeld);
 console.log(otherSpielfeld);
 
 let schiffe = [
-  {name: "Schlachtschiff" , length: 5, anzahl: 1},
-  {name: "Kreuzer" , length: 4 , anzahl: 2},
-  {name: "Zerstörer" , length: 3 , anzahl: 3},
-  {name: "U-Boot" , length: 2 , anzahl: 4}
+  {name: "Schlachtschiff" , length: 5, amount: 1},
+  {name: "Kreuzer" , length: 4 , amount: 2},
+  {name: "Zerstörer" , length: 3 , amount: 3},
+  {name: "U-Boot" , length: 2 , amount: 4}
 ];
 
 const HORIZONTAL = 1;
@@ -38,6 +38,22 @@ function showDisconnectedModal(){
 	
 	Ships are placed from left to right, in detail from x to x + ship.length 
 	or from top to bottom, in detail from y to y + ship.length
+	
+	
+	
+	Field values / Field states 
+	
+	
+	important for placement phase
+	
+	0 := Empty field; occupyable by a new ship
+	1 := Occupied field; not occupyable by a new ship
+	2 := Empty field, which has at least one field with value 1 as a neighbour field; not occupyable by a new ship
+	
+	important for battle phase
+	
+	-1 := Empty field that has been shot; Results from 0- or 1-fields being shot 
+	3 := Ship that has been shot; Results from 2-fields being shot
 	*/
 
 function createField (fieldname){
@@ -236,7 +252,7 @@ function startPosShip(counter, firstPos){
 // platziert die Schiffe zufällig
 function setRandomShips(field){
   for(let i = 0; i < schiffe.length; i++){
-    for(let j = 0; j < schiffe[i].anzahl; j++){
+    for(let j = 0; j < schiffe[i].amount; j++){
       while(!setShip(field, schiffe[i])){
         console.log(schiffe[i].name);
       }
