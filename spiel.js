@@ -106,6 +106,34 @@ function setShip(field, schiff){
 }
 
 function isValidPos(field, x, y, orientierung, counter){
+// TODO: Rename orientierung to orientation
+// TODO: Rename VERTIKAL to VERTICAL
+// TODO: Rename schiff to ship
+// TODO: Rename schiff.länge to schiff.length / ship.length
+function isValidPos(field, schiff, x, y, orientierung){
+	
+	if(orientierung == HORIZONTAL && x + schiff.length <= 9){
+	// Is the horizontal border not overstepped?
+		for(let i = x; i < x + schiff.length; i++) {
+		// Check for every field where the ship would be placed whether that placement is valid
+			if(field[i][y] != 1) {
+				return false;
+			}
+		}
+		return true;
+	} else if (orientierung == VERTIKAL && y + schiff.length <= 9){
+	// Is the vertical border not overstepped?
+		for(let i = y; i < y + schiff.length; i++) {
+		// Check for every field where the ship would be placed whether that placement is valid
+			if(field[x][i] != 1) {
+				return false;
+			}
+		}
+		return true;
+	}
+	return false;
+}
+	/*
   var isValid = true;
   if(orientierung == HORIZONTAL){
     if(counter == 0){
@@ -195,6 +223,7 @@ function isValidPos(field, x, y, orientierung, counter){
         return false;
       }
   }
+  */
 }
 
 function startPosShip(counter, firstPos){
