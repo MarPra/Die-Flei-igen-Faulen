@@ -51,7 +51,8 @@ function createField (fieldname){
 function shoot(posX, posY){
   console.log(posX, posY);
   if(otherSpielfeld[posX][posY] == 1){
-      update(otherSpielfeld, document.getElementById("spielfeldGegner"));
+      console.log("Treffer");
+      showShoot(posX, posY);
   }
 }
 
@@ -186,22 +187,38 @@ function update (field, table){
   // delete older table
   table.innerHTML = "";
   renderTableHead(table);
-  for (var row = 0; row < 10; row++) {
-    var rowElement = document.createElement("tr");
-    var rowHead = document.createElement('th');
-    rowHead.setAttribute("scope", "row");
-    rowHead.innerHTML = row;
-    rowElement.appendChild(rowHead);
-    table.appendChild(rowElement);
-      for (var column = 0; column < 10; column++) {
-          var columnElement = document.createElement('td');
-          if(field[row][column] == 1){
-            columnElement.setAttribute("class", "Schiff");
-            columnElement.setAttribute("style", "border: 3px solid blue;")
-          }
-            rowElement.appendChild(columnElement);
+  if(field == mySpielfeld){
+    for (var row = 0; row < 10; row++) {
+      var rowElement = document.createElement("tr");
+      var rowHead = document.createElement('th');
+      rowHead.setAttribute("scope", "row");
+      rowHead.innerHTML = row;
+      rowElement.appendChild(rowHead);
+      table.appendChild(rowElement);
+        for (var column = 0; column < 10; column++) {
+            var columnElement = document.createElement('td');
+            if(field[row][column] == 1){
+              columnElement.setAttribute("class", "Schiff");
+              columnElement.setAttribute("style", "border: 3px solid blue;")
+            }
+              rowElement.appendChild(columnElement);
+        }
       }
-    }
+  } else{
+    for (var row = 0; row < 10; row++) {
+      var rowElement = document.createElement("tr");
+      var rowHead = document.createElement('th');
+      rowHead.setAttribute("scope", "row");
+      rowHead.innerHTML = row;
+      rowElement.appendChild(rowHead);
+      table.appendChild(rowElement);
+        for (var column = 0; column < 10; column++) {
+            var columnElement = document.createElement('td');
+            columnElement.setAttribute("onclick" , "shoot(" + row +"," + column + ")");
+            rowElement.appendChild(columnElement);
+  }
+}
+}
 }
 
 function renderTable(table, rows, columns) {
@@ -246,4 +263,26 @@ function saveNames(){
 function showHighscore(){
   var highscore = document.getElementById("Highscore");
   highscore.innerHTML = "Hier wird der Highscore geladen";
+}
+
+function showShoot(posX, posY){
+  var table = document.getElementById("spielfeldGegner");
+  table.innerHTML = "";
+  renderTableHead(table);
+  for (var row = 0; row < 10; row++) {
+    var rowElement = document.createElement("tr");
+    var rowHead = document.createElement('th');
+    rowHead.setAttribute("scope", "row");
+    rowHead.innerHTML = row;
+    rowElement.appendChild(rowHead);
+    table.appendChild(rowElement);
+      for (var column = 0; column < 10; column++) {
+          var columnElement = document.createElement('td');
+          if(column === posY && row === posX){
+            columnElement.setAttribute("style" , "border: 3px solid green;");
+          }
+          columnElement.setAttribute("onclick" , "shoot(" + row +"," + column + ")");
+          rowElement.appendChild(columnElement);
+}
+}
 }
