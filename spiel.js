@@ -1,7 +1,13 @@
 //----------------------------GLOBALE VARIABLEN---------------------------------
+const HORIZONTAL = 1;
+const VERTICAL = 0;
+const ROWS = 10;
+const COLUMNS = 10;
+const WATER = 0;
+const SHIP = 1;
+const MISSED_SHOOT = -1;
+const HIT = 2;
 let shootsCounter = 0;
-let ROWS = 10;
-let COLUMNS = 10;
 let tableHeadArray = ["#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 let mySpielfeld = createField();
 let otherSpielfeld = createField();
@@ -15,8 +21,7 @@ let schiffe = [
   {name: "U-Boot" , length: 2 , amount: 4}
 ];
 
-const HORIZONTAL = 1;
-const VERTICAL = 0;
+let AMOUNT_SHIPS = schiffe[0].amount + schiffe[1].amount + schiffe[2].amount + schiffe[3].amount;
 
 //----------------------------MODALS--------------------------------------------
 function showPlayerModal(){
@@ -33,41 +38,41 @@ function showDisconnectedModal(){
 
 //----------------------------SPIELLOGIK----------------------------------------
 
-	/* 
+	/*
 	Ship placement
-	
-	Ships are placed from left to right, in detail from x to x + ship.length 
+
+	Ships are placed from left to right, in detail from x to x + ship.length
 	or from top to bottom, in detail from y to y + ship.length
-	
-	
-	
-	Field values / Field states 
-	
-	
+
+
+
+	Field values / Field states
+
+
 	important for placement phase
-	
+
 	0 := Empty field; occupyable by a new ship
 	1 := Occupied field; not occupyable by a new ship
 	2 := Empty field, which has at least one field with value 1 as a neighbour field; not occupyable by a new ship
-	
+
 	important for battle phase
-	
-	-1 := Empty field that has been shot; Results from 0- or 1-fields being shot 
+
+	-1 := Empty field that has been shot; Results from 0- or 1-fields being shot
 	3 := Ship that has been shot; Results from 2-fields being shot
 	*/
 
-function createField (fieldname){
+function createField (){
   return [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
   ];
 }
 
@@ -75,7 +80,7 @@ function createField (fieldname){
 function shoot(posX, posY){
   shootsCounter++;
   console.log(posX, posY);
-  if(otherSpielfeld[posX][posY] == 1){
+  if(otherSpielfeld[posX][posY] == SHIP){
       console.log("Treffer");
       otherSpielfeld[posX][posY] = 2;
       update(otherSpielfeld, document.getElementById('spielfeldGegner'));
@@ -91,43 +96,83 @@ function setShip(field, ship){
   var y = getRandomInt(0,9);
   var orientation =  getRandomInt(0,1);
     if(orientation == HORIZONTAL){
+
       for(let i = 0; i < ship.length; i++){
-      if(y+i < COLUMNS){
-        if(isValidPos(field, x, y+i, orientation, i)){
-          field[x][y+i] = 1;
-          return true;
-        }
+        if(!isValidPos(field, x, y+i, orientation, i)){
           return false;
-      }else{
-        if(isValidPos(field, x, y-i, orientation, i)){
-          field[x][y-i] = 1;
-          return true;
         }
-        return false;
       }
-    }
+      for(let i = 0; i < ship.length; i++){
+        field[x][y+i] = SHIP;
+      }
+      return true;
     }
       //Vertical
     else{
       for(let i = 0; i < ship.length; i++){
-        if(x+i <ROWS){
-          if(isValidPos(field, x+i, y, orientation, i)){
-            field[x+i][y] = 1;
-            return true;
-          }
-          return false;
-        }else{
-          if(isValidPos(field, x-i, y, orientation, i)){
-            field[x-i][y] = 1;
-            return true;
-          }
+        if(!isValidPos(field, x+i, y, orientation, i)){
           return false;
         }
       }
+      for(let i = 0; i < ship.length; i++){
+        field[x+i][y] = SHIP;
+      }
+      return true;
     }
 }
 
-function isValidPos(field, ship, x, y, orientation){
+function checkNextFields(field, posX, posY, orientation, counter) {
+  if(orientation == HORIZONTAL){
+    if(counter == 0){
+      return checkField(field, posX - 1, posY - 1)&& // oben links
+             checkField(field, posX, posY - 1)&& // oben mitte
+             checkField(field, posX + 1, posY - 1) && // oben rechts
+             checkField(field, posX - 1, posY) && // links
+             checkField(field, posX + 1 , posY)&& // rechts
+             checkField(field, posX, posY +1); // unten
+    }else{
+      return  checkField(field, posX - 1, posY) && // links
+              checkField(field, posX + 1, posY) && // rechts
+              checkField(field, posX - 1, posY + 1) && // links vorne
+              checkField(field, posX, posY + 1) && // vorne mitte
+              checkField(field, posX + 1, posY + 1); // rechts vorne
+    }
+  } else{
+    if(counter == 0){
+      return  checkField(field, posX - 1, posY + 1)&& // links unten
+              checkField(field, posX - 1, posY)&& //links mitte
+              checkField(field, posX - 1, posY - 1)&& // links oben
+              checkField(field, posX, posY + 1)&& // unten
+              checkField(field, posX, posY - 1) && // 0ben
+              checkField(field, posX +1, posY); // vorne
+    } else{
+      return  checkField(field, posX, posY - 1)&& // oben
+              checkField(field, posX, posY + 1)&& // unten
+              checkField(field, posX + 1, posY + 1)&& // rechts unten
+              checkField(field, posX + 1, posY)&& // rechts mitte
+              checkField(field, posX + 1, posY - 1); // rechts oben
+    }
+  }
+}
+
+function checkField(field, posX, posY) {
+  if(typeof field[posY] === 'undefined' || typeof field[posY][posX] === 'undefined' || field[posY][posX] == WATER) {
+    return true;
+  }
+  return false;
+}
+
+function isValidPos(field, startPosX, startPosY, orientation, counter) {
+  if(typeof field[startPosY] === 'undefined' || typeof field[startPosY][startPosX] === 'undefined'){
+    return false;
+  }
+  if(!checkNextFields(field, startPosX, startPosY, orientation, counter)) {
+      return false;
+  }
+  return true;
+}
+
+/*function isValidPos(field, ship, x, y, orientation){
 
 	if(orientation == HORIZONTAL && x + ship.length <= 9){
 	// Is the horizontal border not overstepped?
@@ -149,26 +194,26 @@ function isValidPos(field, ship, x, y, orientation){
 		return true;
 	}
 	return false;
-}
-	/*
-function isValidPos(field, x, y, orientation, counter){
+}*/
+
+/*function isValidPos(field, x, y, orientation, counter){
   var isValid = true;
   if(orientation == HORIZONTAL){
     if(counter == 0){
       // aktuelle Position
-      if(field[x][y] == 0){
+      if(field[x][y] == WATER){
         // oben links
-        if(typeof field[x-1][y-1] == "undefined" || field[x-1][y-1] == 0){
+        if(typeof field[x-1] === 'undefined' || typeof field[x-1][y-1] === 'undefined' || field[x-1][y-1] == WATER){
           // oben mitte
-          if(typeof field[x][y-1] == "undefined" || field[x][y-1] == 0){
+          if(typeof field[x] === 'undefined' || typeof field[x][y-1] === 'undefined' || field[x][y-1] == WATER){
             // oben rechts
-            if(typeof field[x+1][y-1] == "undefined" || field[x+1][y-1] == 0){
+            if(typeof field[x+1] === 'undefined'|| typeof  field[x+1][y-1] === 'undefined' || field[x+1][y-1] == WATER){
               // links daneben
-              if(typeof field[x-1][y] == "undefined" || field[x-1][y] == 0){
+              if(typeof field[x-1] === 'undefined' || typeof  field[x-1][y]=== 'undefined'|| field[x-1][y] == WATER){
                 // rechts daneben
-                if(typeof field[x+1][y] == "undefined" || field[x+1][y] == 0){
+                if(typeof field[x+1] === 'undefined' || typeof  field[x+1][y] === 'undefined' || field[x+1][y] == WATER){
                   // darunter
-                  if(typeof field[x][y+1] == "undefined" || field[x][y+1] == 0){
+                  if(typeof field[x] === 'undefined' || typeof  field[x][y+1] === 'undefined' || field[x][y+1] == WATER){
                     return true;
                   }
                 }
@@ -182,15 +227,15 @@ function isValidPos(field, x, y, orientation, counter){
         // aktuelle Position
           if(field[x][y] == 0){
             //links daneben
-            if(typeof field[x-1][y] == "undefined" || field[x-1][y] == 0){
+            if(typeof field[x-1]=== 'undefined' || typeof field[x-1][y] === 'undefined' || field[x-1][y] == WATER){
               // rechts daneben
-              if(typeof field[x+1][y] == "undefined" || field[x+1][y] == 0){
+              if(typeof field[x+1] === 'undefined' || typeof field[x+1][y] === 'undefined' || field[x+1][y] == WATER){
                 //links darunter
-                if(typeof field[x-1][y+1] == "undefined" || field[x-1][y+1] == 0){
+                if(typeof field[x-1] === 'undefined' || typeof field[x-1][y+1] === 'undefined'|| field[x-1][y+1] == WATER){
                   // darunter
-                  if(typeof field[x][y+1] == "undefined" || field[x][y+1] == 0){
+                  if(typeof field[x] === 'undefined' || typeof field[x][y+1] === 'undefined' || field[x][y+1] == WATER){
                     //recht darunter
-                    if(typeof field[x+1][y+1] == "undefined" || field[x+1][y+1] == 0){
+                    if(typeof field[x+1] === 'undefined' || typeof field[x+1][y+1] === 'undefined' || field[x+1][y+1] == WATER){
                       return true;
                     }
                   }
@@ -205,15 +250,15 @@ function isValidPos(field, x, y, orientation, counter){
   else{
       if(counter == 0){
         //links unten daneben
-        if(typeof field[x-1][y+1] == "undefined" || field[x-1][y+1] == 0){
+        if(typeof field[x-1] === 'undefined' || typeof field[x-1][y+1]=== 'undefined'|| field[x-1][y+1] == WATER){
           // links daneben
-          if(typeof field[x-1][y] == "undefined" || field[x-1][y] == 0){
+          if(typeof field[x-1] === 'undefined' || typeof field[x-1][y] === 'undefined'|| field[x-1][y] == WATER){
             // rechts oben daneben
-            if(typeof field[x-1][y-1] == "undefined" || field[x-1][y-1] == 0){
+            if(typeof field[x-1] === 'undefined' || typeof field[x-1][y-1] === 'undefined' || field[x-1][y-1] == WATER){
               // unten
-              if(typeof field[x][y+1] == "undefined" || field[x][y+1] == 0){
+              if(typeof field[x] === 'undefined' || typeof field[x][y+1] === 'undefined'|| field[x][y+1] == WATER){
                 // oben
-                if(typeof field[x][y-1] == "undefined" || field[x][y-1] == 0){
+                if(typeof field[x] === 'undefined' || typeof field[x][y-1] === 'undefined'|| field[x][y-1] == WATER){
                   return true;
                 }
               }
@@ -223,15 +268,15 @@ function isValidPos(field, x, y, orientation, counter){
         return false;
       }else{
         // oben
-        if(typeof field[x][y-1] == "undefined" || field[x][y-1] == 0){
+        if(typeof field[x] === 'undefined' || typeof field[x][y-1] === 'undefined' || field[x][y-1] == WATER){
           // unten
-          if(typeof field[x][y+1] == "undefined" || field[x][y+1] == 0){
+          if(typeof field[x] === 'undefined' || typeof field[x][y+1] === 'undefined' || field[x][y+1] == WATER){
             // rechts unten daneben
-            if(typeof field[x+1][y+1] == "undefined" ||  field[x+1][y+1] == 0){
+            if(typeof field[x+1] === 'undefined' || typeof field[x+1][y+1] === 'undefined' ||  field[x+1][y+1] == WATER){
               // rechts daneben
-              if(typeof field[x+1][y] == "undefined" ||  field[x+1][y] == 0){
+              if(typeof field[x+1] === 'undefined' || typeof field[x+1][y] === 'undefined' || field[x+1][y] == WATER){
                 // rechts oben daneben
-                if(typeof field[x+1][y-1] == "undefined" ||  field[x+1][y-1] == 0){
+                if(typeof field[x+1] === 'undefined' || typeof field[x+1][y-1] === 'undefined' || field[x+1][y-1] == WATER){
                   return true;
                 }
               }
@@ -241,24 +286,20 @@ function isValidPos(field, x, y, orientation, counter){
         return false;
       }
   }
- 
-}
- */
-function startPosShip(counter, firstPos){
-  return firstPos - counter;
-}
+
+}*/
 
 
 // platziert die Schiffe zufällig
 function setRandomShips(field){
   for(let i = 0; i < schiffe.length; i++){
-    for(let j = 0; j < schiffe[i].amount; j++){
-      while(!setShip(field, schiffe[i])){
-        console.log(schiffe[i].name);
+      for(let j = 0; j < schiffe[i].amount; j++){
+        while(!setShip(field, schiffe[i])){
+          console.log(schiffe[i].name);
+        }
       }
     }
   }
-}
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -272,7 +313,9 @@ function initalize(){
    //renderTable(spielfeldGegner, 10, 10);
    showHighscore();
    showPlayerModal();
+   console.log("Mein Spielfeld");
    setRandomShips(mySpielfeld);
+   console.log("Andere Spielfeld");
    setRandomShips(otherSpielfeld);
    update(mySpielfeld, spielfeldEigen);
    update(otherSpielfeld, spielfeldGegner);
