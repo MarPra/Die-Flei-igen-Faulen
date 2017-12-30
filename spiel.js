@@ -21,8 +21,6 @@ let schiffe = [
   {name: "U-Boot" , length: 2 , amount: 4}
 ];
 
-let AMOUNT_SHIPS = schiffe[0].amount + schiffe[1].amount + schiffe[2].amount + schiffe[3].amount;
-
 //----------------------------MODALS--------------------------------------------
 function showPlayerModal(){
    $("#spielerEingabe").modal('show');
@@ -53,12 +51,11 @@ function showDisconnectedModal(){
 
 	0 := Empty field; occupyable by a new ship
 	1 := Occupied field; not occupyable by a new ship
-	2 := Empty field, which has at least one field with value 1 as a neighbour field; not occupyable by a new ship
 
 	important for battle phase
 
 	-1 := Empty field that has been shot; Results from 0- or 1-fields being shot
-	3 := Ship that has been shot; Results from 2-fields being shot
+	2 := Ship that has been shot; Results from 2-fields being shot
 	*/
 
 function createField (){
@@ -82,10 +79,10 @@ function shoot(posX, posY){
   console.log(posX, posY);
   if(otherSpielfeld[posX][posY] == SHIP){
       console.log("Treffer");
-      otherSpielfeld[posX][posY] = 2;
+      otherSpielfeld[posX][posY] = HIT;
       update(otherSpielfeld, document.getElementById('spielfeldGegner'));
   }else{
-    otherSpielfeld[posX][posY] = -1;
+    otherSpielfeld[posX][posY] = MISSED_SHOOT;
     update(otherSpielfeld, document.getElementById('spielfeldGegner'));
   }
 }
@@ -121,40 +118,41 @@ function setShip(field, ship){
     }
 }
 
-function checkNextFields(field, posX, posY, orientation, counter) {
+function checkNextFields(field, x, y, orientation, counter) {
   if(orientation == HORIZONTAL){
     if(counter == 0){
-      return checkField(field, posX - 1, posY - 1)&& // oben links
-             checkField(field, posX, posY - 1)&& // oben mitte
-             checkField(field, posX + 1, posY - 1) && // oben rechts
-             checkField(field, posX - 1, posY) && // links
-             checkField(field, posX + 1 , posY)&& // rechts
-             checkField(field, posX, posY +1); // unten
+      return checkField(field, x - 1, y - 1)&& // oben links
+             checkField(field, x, y - 1)&& // oben mitte
+             checkField(field, x + 1, y - 1) && // oben rechts
+             checkField(field, x - 1, y) && // links
+             checkField(field, x + 1 , y)&& // rechts
+             checkField(field, x, y + 1); // unten
     }else{
-      return  checkField(field, posX - 1, posY) && // links
-              checkField(field, posX + 1, posY) && // rechts
-              checkField(field, posX - 1, posY + 1) && // links vorne
-              checkField(field, posX, posY + 1) && // vorne mitte
-              checkField(field, posX + 1, posY + 1); // rechts vorne
+      return  checkField(field, x - 1, y) && // links
+              checkField(field, x + 1, y) && // rechts
+              checkField(field, x - 1, y + 1) && // links vorne
+              checkField(field, x, y + 1) && // vorne mitte
+              checkField(field, x + 1, y + 1); // rechts vorne
     }
   } else{
     if(counter == 0){
-      return  checkField(field, posX - 1, posY + 1)&& // links unten
-              checkField(field, posX - 1, posY)&& //links mitte
-              checkField(field, posX - 1, posY - 1)&& // links oben
-              checkField(field, posX, posY + 1)&& // unten
-              checkField(field, posX, posY - 1) && // 0ben
-              checkField(field, posX +1, posY); // vorne
+      return  checkField(field, x - 1, y + 1)&& // links unten
+              checkField(field, x - 1, y)&& //links mitte
+              checkField(field, x - 1, y - 1)&& // links oben
+              checkField(field, x, y + 1)&& // unten
+              checkField(field, x, y - 1) && // 0ben
+              checkField(field, x + 1, y); // vorne
     } else{
-      return  checkField(field, posX, posY - 1)&& // oben
-              checkField(field, posX, posY + 1)&& // unten
-              checkField(field, posX + 1, posY + 1)&& // rechts unten
-              checkField(field, posX + 1, posY)&& // rechts mitte
-              checkField(field, posX + 1, posY - 1); // rechts oben
+      return  checkField(field, x, y - 1)&& // oben
+              checkField(field, x, y + 1)&& // unten
+              checkField(field, x + 1, y + 1)&& // rechts unten
+              checkField(field, x + 1, y)&& // rechts mitte
+              checkField(field, x + 1, y - 1); // rechts oben
     }
   }
 }
 
+// checkt current field
 function checkField(field, posX, posY) {
   if(typeof field[posX] === 'undefined' || typeof field[posX][posY] === 'undefined' || field[posX][posY] == WATER) {
     return true;
@@ -162,11 +160,12 @@ function checkField(field, posX, posY) {
   return false;
 }
 
-function isValidPos(field, startPosX, startPosY, orientation, counter) {
-  if(typeof field[startPosX] === 'undefined' || typeof field[startPosX][startPosY] === 'undefined'){
+// checkt all fields near the current field
+function isValidPos(field,posX, posY, orientation, counter) {
+  if(typeof field[posX] === 'undefined' || typeof field[posX][posY] === 'undefined'){
     return false;
   }
-  if(!checkNextFields(field, startPosX, startPosY, orientation, counter)) {
+  if(!checkNextFields(field, posX, posY, orientation, counter)) {
       return false;
   }
   return true;
@@ -197,7 +196,7 @@ function isValidPos(field, startPosX, startPosY, orientation, counter) {
 }*/
 
 
-// platziert die Schiffe zufällig
+// set all ships randomly
 function setRandomShips(field){
   for(let i = 0; i < schiffe.length; i++){
       for(let j = 0; j < schiffe[i].amount; j++){
