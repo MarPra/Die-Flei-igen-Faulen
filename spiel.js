@@ -1,4 +1,4 @@
-//----------------------------GLOBALE VARIABLEN---------------------------------
+//----------------------------GLOBAL VARIABLES---------------------------------
 const HORIZONTAL = 1;
 const VERTICAL = 0;
 const ROWS = 10;
@@ -14,11 +14,11 @@ let otherSpielfeld = createField();
 console.log(mySpielfeld);
 console.log(otherSpielfeld);
 
-let schiffe = [
-  {name: "Schlachtschiff" , length: 5, amount: 1},
-  {name: "Kreuzer" , length: 4 , amount: 2},
-  {name: "Zerstörer" , length: 3 , amount: 3},
-  {name: "U-Boot" , length: 2 , amount: 4}
+let ships = [
+  {name: "battleship" , length: 5, amount: 1},
+  {name: "cruiser" , length: 4 , amount: 2},
+  {name: "destroyer" , length: 3 , amount: 3},
+  {name: "submarine" , length: 2 , amount: 4}
 ];
 
 //----------------------------MODALS--------------------------------------------
@@ -34,7 +34,7 @@ function showDisconnectedModal(){
    $("#DisconnectedModal").modal('show');
 }
 
-//----------------------------SPIELLOGIK----------------------------------------
+//----------------------------GAME LOGIC----------------------------------------
 
 	/*
 	Ship placement
@@ -47,15 +47,15 @@ function showDisconnectedModal(){
 	Field values / Field states
 
 
-	important for placement phase
+	introduced with placement phase
 
 	0 := Empty field; occupyable by a new ship
 	1 := Occupied field; not occupyable by a new ship
 
-	important for battle phase
+	introduced with battle phase
 
 	-1 := Empty field that has been shot; Results from 0- or 1-fields being shot
-	2 := Ship that has been shot; Results from 2-fields being shot
+	2 := Ship that has been shot; Results from 1-fields being shot
 	*/
 
 function createField (){
@@ -96,6 +96,7 @@ function setShip(field, ship){
 
       for(let i = 0; i < ship.length; i++){
         if(!isValidPos(field, x, y+i, orientation, i)){
+			// why y+i instead of x+i? Isn't x the horizontal coordinate and y the vertical coordinate?
           return false;
         }
       }
@@ -121,38 +122,38 @@ function setShip(field, ship){
 function checkNextFields(field, x, y, orientation, counter) {
   if(orientation == HORIZONTAL){
     if(counter == 0){
-      return checkField(field, x - 1, y - 1)&& // oben links
-             checkField(field, x, y - 1)&& // oben mitte
-             checkField(field, x + 1, y - 1) && // oben rechts
-             checkField(field, x - 1, y) && // links
-             checkField(field, x + 1 , y)&& // rechts
-             checkField(field, x, y + 1); // unten
+      return checkField(field, x - 1, y - 1)&& // top left
+             checkField(field, x, y - 1)&& // top
+             checkField(field, x + 1, y - 1) && // top right
+             checkField(field, x - 1, y) && // left 
+             checkField(field, x + 1 , y)&& // right 
+             checkField(field, x, y + 1); // bottom
     }else{
-      return  checkField(field, x - 1, y) && // links
-              checkField(field, x + 1, y) && // rechts
-              checkField(field, x - 1, y + 1) && // links vorne
-              checkField(field, x, y + 1) && // vorne mitte
-              checkField(field, x + 1, y + 1); // rechts vorne
+      return  checkField(field, x - 1, y) && // left 	
+              checkField(field, x + 1, y) && // right 
+              checkField(field, x - 1, y + 1) && // bottom left
+              checkField(field, x, y + 1) && // bottom
+              checkField(field, x + 1, y + 1); // bottom right
     }
   } else{
     if(counter == 0){
-      return  checkField(field, x - 1, y + 1)&& // links unten
-              checkField(field, x - 1, y)&& //links mitte
-              checkField(field, x - 1, y - 1)&& // links oben
-              checkField(field, x, y + 1)&& // unten
-              checkField(field, x, y - 1) && // 0ben
-              checkField(field, x + 1, y); // vorne
+      return  checkField(field, x - 1, y + 1)&& // bottom left
+              checkField(field, x - 1, y)&& // left
+              checkField(field, x - 1, y - 1)&& // top left  
+              checkField(field, x, y + 1)&& // bottom 
+              checkField(field, x, y - 1) && // top
+              checkField(field, x + 1, y); // right
     } else{
-      return  checkField(field, x, y - 1)&& // oben
-              checkField(field, x, y + 1)&& // unten
-              checkField(field, x + 1, y + 1)&& // rechts unten
-              checkField(field, x + 1, y)&& // rechts mitte
-              checkField(field, x + 1, y - 1); // rechts oben
+      return  checkField(field, x, y - 1)&& // top
+              checkField(field, x, y + 1)&& // bottom
+              checkField(field, x + 1, y + 1)&& // bottom right
+              checkField(field, x + 1, y)&& // right
+              checkField(field, x + 1, y - 1); // top right
     }
   }
 }
 
-// checkt current field
+// checks current field // check for what? 
 function checkField(field, posX, posY) {
   if(typeof field[posX] === 'undefined' || typeof field[posX][posY] === 'undefined' || field[posX][posY] == WATER) {
     return true;
@@ -160,7 +161,7 @@ function checkField(field, posX, posY) {
   return false;
 }
 
-// checkt all fields near the current field
+// checks all fields near the current field
 function isValidPos(field,posX, posY, orientation, counter) {
   if(typeof field[posX] === 'undefined' || typeof field[posX][posY] === 'undefined'){
     return false;
@@ -197,11 +198,11 @@ function isValidPos(field,posX, posY, orientation, counter) {
 
 
 // set all ships randomly
-function setRandomShips(field){
-  for(let i = 0; i < schiffe.length; i++){
-      for(let j = 0; j < schiffe[i].amount; j++){
-        while(!setShip(field, schiffe[i])){
-          console.log(schiffe[i].name);
+function setShipsRandomly(field){
+  for(let i = 0; i < ships.length; i++){
+      for(let j = 0; j < ships[i].amount; j++){
+        while(!setShip(field, ships[i])){
+          console.log(ships[i].name);
         }
       }
     }
@@ -211,7 +212,7 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-//----------------------------GAMEANZEIGE---------------------------------------
+//----------------------------GAME DISPLAY---------------------------------------
 function initalize(){
   var spielfeldEigen = document.getElementById("spielfeldEigen");
   // renderTable(spielfeldEigen, 10, 10);
@@ -220,9 +221,9 @@ function initalize(){
    showHighscore();
    showPlayerModal();
    console.log("Mein Spielfeld");
-   setRandomShips(mySpielfeld);
+   setShipsRandomly(mySpielfeld);
    console.log("Andere Spielfeld");
-   setRandomShips(otherSpielfeld);
+   setShipsRandomly(otherSpielfeld);
    update(mySpielfeld, spielfeldEigen);
    update(otherSpielfeld, spielfeldGegner);
 }
