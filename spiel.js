@@ -92,11 +92,10 @@ function setShip(field, ship){
   var x = getRandomInt(0,9);
   var y = getRandomInt(0,9);
   var orientation =  getRandomInt(0,1);
-    if(orientation == HORIZONTAL){
+    if(orientation == VERTICAL){
 
       for(let i = 0; i < ship.length; i++){
         if(!isValidPos(field, x, y+i, orientation, i)){
-			// why y+i instead of x+i? Isn't x the horizontal coordinate and y the vertical coordinate?
           return false;
         }
       }
@@ -105,7 +104,6 @@ function setShip(field, ship){
       }
       return true;
     }
-      //Vertical
     else{
       for(let i = 0; i < ship.length; i++){
         if(!isValidPos(field, x+i, y, orientation, i)){
@@ -120,7 +118,7 @@ function setShip(field, ship){
 }
 
 function checkNextFields(field, x, y, orientation, counter) {
-  if(orientation == HORIZONTAL){
+  if(orientation == VERTICAL){
     if(counter == 0){
       return checkField(field, x - 1, y - 1)&& // top left
              checkField(field, x, y - 1)&& // top
