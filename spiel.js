@@ -156,14 +156,14 @@ function checkNextFields(field, posX, posY, orientation, counter) {
 }
 
 function checkField(field, posX, posY) {
-  if(typeof field[posY] === 'undefined' || typeof field[posY][posX] === 'undefined' || field[posY][posX] == WATER) {
+  if(typeof field[posX] === 'undefined' || typeof field[posX][posY] === 'undefined' || field[posX][posY] == WATER) {
     return true;
   }
   return false;
 }
 
 function isValidPos(field, startPosX, startPosY, orientation, counter) {
-  if(typeof field[startPosY] === 'undefined' || typeof field[startPosY][startPosX] === 'undefined'){
+  if(typeof field[startPosX] === 'undefined' || typeof field[startPosX][startPosY] === 'undefined'){
     return false;
   }
   if(!checkNextFields(field, startPosX, startPosY, orientation, counter)) {
@@ -194,99 +194,6 @@ function isValidPos(field, startPosX, startPosY, orientation, counter) {
 		return true;
 	}
 	return false;
-}*/
-
-/*function isValidPos(field, x, y, orientation, counter){
-  var isValid = true;
-  if(orientation == HORIZONTAL){
-    if(counter == 0){
-      // aktuelle Position
-      if(field[x][y] == WATER){
-        // oben links
-        if(typeof field[x-1] === 'undefined' || typeof field[x-1][y-1] === 'undefined' || field[x-1][y-1] == WATER){
-          // oben mitte
-          if(typeof field[x] === 'undefined' || typeof field[x][y-1] === 'undefined' || field[x][y-1] == WATER){
-            // oben rechts
-            if(typeof field[x+1] === 'undefined'|| typeof  field[x+1][y-1] === 'undefined' || field[x+1][y-1] == WATER){
-              // links daneben
-              if(typeof field[x-1] === 'undefined' || typeof  field[x-1][y]=== 'undefined'|| field[x-1][y] == WATER){
-                // rechts daneben
-                if(typeof field[x+1] === 'undefined' || typeof  field[x+1][y] === 'undefined' || field[x+1][y] == WATER){
-                  // darunter
-                  if(typeof field[x] === 'undefined' || typeof  field[x][y+1] === 'undefined' || field[x][y+1] == WATER){
-                    return true;
-                  }
-                }
-              }
-            }
-          }
-        }
-        }
-        return false;
-      } else{
-        // aktuelle Position
-          if(field[x][y] == 0){
-            //links daneben
-            if(typeof field[x-1]=== 'undefined' || typeof field[x-1][y] === 'undefined' || field[x-1][y] == WATER){
-              // rechts daneben
-              if(typeof field[x+1] === 'undefined' || typeof field[x+1][y] === 'undefined' || field[x+1][y] == WATER){
-                //links darunter
-                if(typeof field[x-1] === 'undefined' || typeof field[x-1][y+1] === 'undefined'|| field[x-1][y+1] == WATER){
-                  // darunter
-                  if(typeof field[x] === 'undefined' || typeof field[x][y+1] === 'undefined' || field[x][y+1] == WATER){
-                    //recht darunter
-                    if(typeof field[x+1] === 'undefined' || typeof field[x+1][y+1] === 'undefined' || field[x+1][y+1] == WATER){
-                      return true;
-                    }
-                  }
-                }
-              }
-            }
-          }
-          return false;
-      }
-    }
-    // Vertical
-  else{
-      if(counter == 0){
-        //links unten daneben
-        if(typeof field[x-1] === 'undefined' || typeof field[x-1][y+1]=== 'undefined'|| field[x-1][y+1] == WATER){
-          // links daneben
-          if(typeof field[x-1] === 'undefined' || typeof field[x-1][y] === 'undefined'|| field[x-1][y] == WATER){
-            // rechts oben daneben
-            if(typeof field[x-1] === 'undefined' || typeof field[x-1][y-1] === 'undefined' || field[x-1][y-1] == WATER){
-              // unten
-              if(typeof field[x] === 'undefined' || typeof field[x][y+1] === 'undefined'|| field[x][y+1] == WATER){
-                // oben
-                if(typeof field[x] === 'undefined' || typeof field[x][y-1] === 'undefined'|| field[x][y-1] == WATER){
-                  return true;
-                }
-              }
-            }
-          }
-        }
-        return false;
-      }else{
-        // oben
-        if(typeof field[x] === 'undefined' || typeof field[x][y-1] === 'undefined' || field[x][y-1] == WATER){
-          // unten
-          if(typeof field[x] === 'undefined' || typeof field[x][y+1] === 'undefined' || field[x][y+1] == WATER){
-            // rechts unten daneben
-            if(typeof field[x+1] === 'undefined' || typeof field[x+1][y+1] === 'undefined' ||  field[x+1][y+1] == WATER){
-              // rechts daneben
-              if(typeof field[x+1] === 'undefined' || typeof field[x+1][y] === 'undefined' || field[x+1][y] == WATER){
-                // rechts oben daneben
-                if(typeof field[x+1] === 'undefined' || typeof field[x+1][y-1] === 'undefined' || field[x+1][y-1] == WATER){
-                  return true;
-                }
-              }
-            }
-          }
-        }
-        return false;
-      }
-  }
-
 }*/
 
 
