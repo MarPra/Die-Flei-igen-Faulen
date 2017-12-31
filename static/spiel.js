@@ -123,12 +123,12 @@ function checkNextFields(field, x, y, orientation, counter) {
       return checkField(field, x - 1, y - 1)&& // top left
              checkField(field, x, y - 1)&& // top
              checkField(field, x + 1, y - 1) && // top right
-             checkField(field, x - 1, y) && // left 
-             checkField(field, x + 1 , y)&& // right 
+             checkField(field, x - 1, y) && // left
+             checkField(field, x + 1 , y)&& // right
              checkField(field, x, y + 1); // bottom
     }else{
-      return  checkField(field, x - 1, y) && // left 	
-              checkField(field, x + 1, y) && // right 
+      return  checkField(field, x - 1, y) && // left
+              checkField(field, x + 1, y) && // right
               checkField(field, x - 1, y + 1) && // bottom left
               checkField(field, x, y + 1) && // bottom
               checkField(field, x + 1, y + 1); // bottom right
@@ -137,8 +137,8 @@ function checkNextFields(field, x, y, orientation, counter) {
     if(counter == 0){
       return  checkField(field, x - 1, y + 1)&& // bottom left
               checkField(field, x - 1, y)&& // left
-              checkField(field, x - 1, y - 1)&& // top left  
-              checkField(field, x, y + 1)&& // bottom 
+              checkField(field, x - 1, y - 1)&& // top left
+              checkField(field, x, y + 1)&& // bottom
               checkField(field, x, y - 1) && // top
               checkField(field, x + 1, y); // right
     } else{
@@ -151,7 +151,7 @@ function checkNextFields(field, x, y, orientation, counter) {
   }
 }
 
-// checks current field // check for what? 
+// checks current field // check for what?
 function checkField(field, posX, posY) {
   if(typeof field[posX] === 'undefined' || typeof field[posX][posY] === 'undefined' || field[posX][posY] == WATER) {
     return true;
