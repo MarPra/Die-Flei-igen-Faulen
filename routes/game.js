@@ -1,0 +1,33 @@
+var express = require('express');
+var router = express.Router();
+
+const HORIZONTAL = 1;
+const VERTICAL = 0;
+const ROWS = 10;
+const COLUMNS = 10;
+const WATER = 0;
+const SHIP = 1;
+const MISSED_SHOOT = -1;
+const HIT = 2;
+
+var myBoard = createField();
+var opponentBoard = createField();
+
+function createField (){
+  return [
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+  ];
+}
+
+
+
+module.exports = router;

@@ -13,6 +13,7 @@ let mySpielfeld = createField();
 let otherSpielfeld = createField();
 console.log(mySpielfeld);
 console.log(otherSpielfeld);
+var socket = io();
 
 let ships = [
   {name: "battleship" , length: 5, amount: 1},
@@ -75,7 +76,12 @@ function createField (){
 
 
 function shoot(posX, posY){
-  shootsCounter++;
+  socket.emit('shoot',{x: posX, y: posY});
+  socket.on('shoot', function(data){
+    console.log(data);
+  });
+
+  /*shootsCounter++;
   console.log(posX, posY);
   if(otherSpielfeld[posX][posY] == SHIP){
       console.log("Treffer");
@@ -84,7 +90,7 @@ function shoot(posX, posY){
   }else{
     otherSpielfeld[posX][posY] = MISSED_SHOOT;
     update(otherSpielfeld, document.getElementById('spielfeldGegner'));
-  }
+  }*/
 }
 
 
