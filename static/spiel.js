@@ -9,10 +9,8 @@ const MISSED_SHOOT = -1;
 const HIT = 2;
 let shootsCounter = 0;
 let tableHeadArray = ["#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
-let mySpielfeld = createField();
-let otherSpielfeld = createField();
-console.log(mySpielfeld);
-console.log(otherSpielfeld);
+let myBoard = createField();
+console.log(myBoard);
 var socket = io();
 
 let ships = [
@@ -72,25 +70,15 @@ function createField (){
     [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
     [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
   ];
+  socket.emit('getBoard', myBoard);
 }
 
 
 function shoot(posX, posY){
   socket.emit('shoot',{x: posX, y: posY});
   socket.on('shoot', function(data){
-    console.log(data);
+    // Ergebnis der Berechnung zurückkriegen
   });
-
-  /*shootsCounter++;
-  console.log(posX, posY);
-  if(otherSpielfeld[posX][posY] == SHIP){
-      console.log("Treffer");
-      otherSpielfeld[posX][posY] = HIT;
-      update(otherSpielfeld, document.getElementById('spielfeldGegner'));
-  }else{
-    otherSpielfeld[posX][posY] = MISSED_SHOOT;
-    update(otherSpielfeld, document.getElementById('spielfeldGegner'));
-  }*/
 }
 
 
@@ -176,31 +164,6 @@ function isValidPos(field,posX, posY, orientation, counter) {
   return true;
 }
 
-/*function isValidPos(field, ship, x, y, orientation){
-
-	if(orientation == HORIZONTAL && x + ship.length <= 9){
-	// Is the horizontal border not overstepped?
-		for(let i = x; i < x + ship.length; i++) {
-		// Check for every field where the ship would be placed whether that placement is valid
-			if(field[i][y] != 0) {
-				return false;
-			}
-		}
-		return true;
-	} else if (orientation == VERTICAL && y + ship.length <= 9){
-	// Is the vertical border not overstepped?
-		for(let i = y; i < y + ship.length; i++) {
-		// Check for every field where the ship would be placed whether that placement is valid
-			if(field[x][i] != 0) {
-				return false;
-			}
-		}
-		return true;
-	}
-	return false;
-}*/
-
-
 // set all ships randomly
 function setShipsRandomly(field){
   for(let i = 0; i < ships.length; i++){
@@ -224,19 +187,15 @@ function initalize(){
    //renderTable(spielfeldGegner, 10, 10);
    showHighscore();
    showPlayerModal();
-   console.log("Mein Spielfeld");
-   setShipsRandomly(mySpielfeld);
-   console.log("Andere Spielfeld");
-   setShipsRandomly(otherSpielfeld);
-   update(mySpielfeld, spielfeldEigen);
-   update(otherSpielfeld, spielfeldGegner);
+   setShipsRandomly(myBoard);
+   update(myBoard, spielfeldEigen)
 }
 
-function update (field, table){
+function update (table){
   // delete older table
   table.innerHTML = "";
   renderTableHead(table);
-  if(field == mySpielfeld){
+  if(table == "spielfeldEigen"){
     for (var row = 0; row < ROWS; row++) {
       var rowElement = document.createElement("tr");
       var rowHead = document.createElement('th');
