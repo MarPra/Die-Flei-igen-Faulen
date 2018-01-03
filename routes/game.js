@@ -11,34 +11,53 @@ module.exports= function(io){
   const MISSED_SHOOT = -1;
   const HIT = 2;
 
-  var board1;
-  var board2;
+  var board1 = new Array();
+  var board2 = new Array();
   var player1;
   var player2;
 
 io.on('connection', function(socket){
+  socket.on('getPlayerID', function(data){
+    if(player1 === 'undefined'){
+      player1 = data.id;
+      console.log(player1);
+    }else{
+      player2 = data.id;
+      console.log(player2);
+    }
+  });
   socket.on('getBoard', function(board){
 
     getField(board);
     console.log(board);
   });
   socket.on('shoot', function(data){
-    console.log(data);
+  var x = data.x;
+  var y = data.y;
+  if(data.id == player1){
+    if(board1[x][y] == SHIP){
+      socket.emit('shootResult', true);
+    }else{
+      socket.emit('shootResult', false);
+    }
+  }else{
+    if(board2[x][y] == SHIP){
+      socket.emit('shootResult', true);
+    }else{
+      socket.emit('shootResult', false);
+    }
+  }
+
   });
 });
 
 function getField(board){
-  if(board.name == "myBoard"){
-    board1 = board;
+  if(player1 == board.id){
+    board1 = board.board;
   }else{
-    board2 = board;
+    board2 = board.board;
   }
 }
-
-
-
-
-
 
   return router;
 }

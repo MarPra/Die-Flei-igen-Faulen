@@ -1,4 +1,5 @@
 //----------------------------GLOBAL VARIABLES---------------------------------
+
 const HORIZONTAL = 1;
 const VERTICAL = 0;
 const ROWS = 10;
@@ -7,11 +8,16 @@ const WATER = 0;
 const SHIP = 1;
 const MISSED_SHOOT = -1;
 const HIT = 2;
+var socket = io();
 let shootsCounter = 0;
 let tableHeadArray = ["#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 let myBoard = createField();
 console.log(myBoard);
-var socket = io();
+let opponentField = createField();
+var playerID = getRandomInt(1000, 999999);
+
+var spielfeldEigen = document.getElementById("spielfeldEigen");
+var spielfeldGegner = document.getElementById("spielfeldGegner");
 
 let ships = [
   {name: "battleship" , length: 5, amount: 1},
@@ -30,7 +36,9 @@ function showWinnerModal(winner){
 }
 
 function showDisconnectedModal(){
-   $("#DisconnectedModal").modal('show');
+  socket.on('disconnect', function(){
+    $("#DisconnectedModal").modal('show');
+  });
 }
 
 //----------------------------GAME LOGIC----------------------------------------
@@ -70,15 +78,31 @@ function createField (){
     [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
     [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
   ];
-  socket.emit('getBoard', myBoard);
+}
+
+function getBoard(){
+  socket.emit('getBoard',{id:playerID, board: myBoard});
+}
+
+function getPlayerID(){
+  socket.emit('getPlayerID', {id: playerID});
 }
 
 
 function shoot(posX, posY){
-  socket.emit('shoot',{x: posX, y: posY});
-  socket.on('shoot', function(data){
-    // Ergebnis der Berechnung zurückkriegen
+  socket.emit('shoot',{id:playerID, x: posX, y: posY});
+  socket.on('shootResult', function(result){
+    if(result){
+      opponentField[posX][posY] = HIT;
+      console.log("Gegnerisches Feld");
+      console.log(opponentField);
+    }else{
+      opponentField[posX][posY] = MISSED_SHOOT;
+      console.log("Gegnerisches Feld");
+      console.log(opponentField);
+    }
   });
+  update(spielfeldGegner);
 }
 
 
@@ -114,12 +138,12 @@ function setShip(field, ship){
 function checkNextFields(field, x, y, orientation, counter) {
   if(orientation == VERTICAL){
     if(counter == 0){
-      return checkField(field, x - 1, y - 1)&& // top left
-             checkField(field, x, y - 1)&& // top
-             checkField(field, x + 1, y - 1) && // top right
-             checkField(field, x - 1, y) && // left
-             checkField(field, x + 1 , y)&& // right
-             checkField(field, x, y + 1); // bottom
+      return  checkField(field, x - 1, y - 1)&& // top left
+              checkField(field, x, y - 1)&& // top
+              checkField(field, x + 1, y - 1) && // top right
+              checkField(field, x - 1, y) && // left
+              checkField(field, x + 1 , y)&& // right
+              checkField(field, x, y + 1); // bottom
     }else{
       return  checkField(field, x - 1, y) && // left
               checkField(field, x + 1, y) && // right
@@ -185,17 +209,22 @@ function initalize(){
   // renderTable(spielfeldEigen, 10, 10);
    var spielfeldGegner = document.getElementById("spielfeldGegner");
    //renderTable(spielfeldGegner, 10, 10);
+   getPlayerID();
+   getBoard();
    showHighscore();
    showPlayerModal();
    setShipsRandomly(myBoard);
-   update(myBoard, spielfeldEigen)
+   update(spielfeldEigen);
+   update(spielfeldGegner);
+
 }
 
 function update (table){
   // delete older table
   table.innerHTML = "";
   renderTableHead(table);
-  if(table == "spielfeldEigen"){
+  console.log(table);
+  if(table.id === "spielfeldEigen"){
     for (var row = 0; row < ROWS; row++) {
       var rowElement = document.createElement("tr");
       var rowHead = document.createElement('th');
@@ -205,11 +234,11 @@ function update (table){
       table.appendChild(rowElement);
         for (var column = 0; column < COLUMNS; column++) {
             var columnElement = document.createElement('td');
-            if(field[row][column] == 1){
+            if(myBoard[row][column] == 1){
               columnElement.setAttribute("class", "Schiff");
               columnElement.setAttribute("style", "border: 3px solid blue;")
             }
-            if(field[row][column] == 2){
+            if(myBoard[row][column] == 2){
               columnElement.setAttribute("style", "border: 3px solid red;")
             }
               rowElement.appendChild(columnElement);
@@ -225,9 +254,9 @@ function update (table){
       table.appendChild(rowElement);
         for (var column = 0; column < COLUMNS; column++) {
             var columnElement = document.createElement('td');
-            if(field[row][column] == 2){
+            if(opponentField[row][column] == 2){
               columnElement.setAttribute("style" , "border: 3px solid green;");
-            } else if(field[row][column] == -1){
+            } else if(opponentField[row][column] == -1){
               columnElement.innerHTML = "-";
             }
             else{

@@ -27,7 +27,6 @@ io.on('connection', function(socket){
    // a user has visited our page
   console.log('a user connected');
   socket.on('disconnect', function() {
-    // a user has left our page
     console.log('a user disconnected');
   });
 });
