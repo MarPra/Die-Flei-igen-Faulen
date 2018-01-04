@@ -205,10 +205,6 @@ function getRandomInt(min, max) {
 
 //----------------------------GAME DISPLAY---------------------------------------
 function initalize(){
-  var spielfeldEigen = document.getElementById("spielfeldEigen");
-  // renderTable(spielfeldEigen, 10, 10);
-   var spielfeldGegner = document.getElementById("spielfeldGegner");
-   //renderTable(spielfeldGegner, 10, 10);
    getPlayerID();
    getBoard();
    showHighscore();

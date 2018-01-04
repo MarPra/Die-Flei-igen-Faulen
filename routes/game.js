@@ -13,8 +13,8 @@ module.exports= function(io){
 
   var board1 = new Array();
   var board2 = new Array();
-  var player1;
-  var player2;
+  var player1 = 'undefined';
+  var player2 = 'undefined';
 
 io.on('connection', function(socket){
   socket.on('getPlayerID', function(data){
@@ -54,8 +54,12 @@ io.on('connection', function(socket){
 function getField(board){
   if(player1 == board.id){
     board1 = board.board;
+    console.log("board1");
+    console.log(board1);
   }else{
     board2 = board.board;
+    console.log("board2");
+    console.log(board2);
   }
 }
 
