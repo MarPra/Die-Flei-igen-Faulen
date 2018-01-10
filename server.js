@@ -1,6 +1,7 @@
 var express = require('express');
 var app     = express();
 const port = 3000;
+const bodyParser = require('body-parser');
 var server  = app.listen(port, function(){
   console.log("Server started on port" + port)
 });
@@ -15,8 +16,10 @@ var game = require('./routes/game')(io);
 app.use(express.static(path.join(__dirname, '/static')));
 
 // Router verwenden
-app.use("/api", highscore);
+app.use("/api/highscore", highscore);
 app.use("/api", game);
+
+app.use(bodyParser.json());
 
 // localhost:3000 erscheint Seite
 app.get('/', function(req, res){

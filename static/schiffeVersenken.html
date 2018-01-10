@@ -12,8 +12,7 @@
 
     <title>Schiffe versenken- Die fleißigen Faulen</title>
 
-      <!-- Für die Websockets -->
-    <script src="/socket.io/socket.io.js"></script>
+
 
     <!-- Bootstrap-CSS -->
    <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css ">
@@ -27,6 +26,7 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <script src="/socket.io/socket.io.js"></script>
     </head>
 
     <body onload="initalize()">
@@ -69,13 +69,11 @@
               <h4 class="modal-title">Spieler</h4>
             </div>
           <div class="modal-body">
-            <p>Bitte gib deine Spielernamen ein:</p>
-            <input id="spieler1" class="form-control" type="text" placeholder="Spieler1"/>
-            <br>
-            <input id="spieler2" class="form-control" type="text" placeholder="Spieler2"/>
+            <p>Bitte gib deinen Spielernamen ein:</p>
+            <input id="player" class="form-control" type="text" placeholder="Name"/>
           </div>
           <div class="modal-footer">
-            <button onclick="saveNames()" type="button" class="btn btn-save" data-dismiss="modal">Speichern</button>
+            <button onclick="saveName()" type="button" class="btn btn-save" data-dismiss="modal">Speichern</button>
           </div>
         </div>
         </div>
@@ -123,6 +121,13 @@
     <h3>Highscore</h3>
     <span id="Highscore"></span>
   </div>
+  <div class="row">
+    <div class="Shoot-Container">
+      Schüsse: <span id= "currentShoots"></span>
+    </div>
+
+
+  </div>
           <div class="row">
             <div class="col-lg-6 col-md-6">
                 <h2 id="headSp1"></h2>
@@ -141,10 +146,13 @@
 
     <!-- Bootstrap-JavaScript
     ================================================== -->
+
     <!-- Am Ende des Dokuments platziert, damit Seiten schneller laden -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <!-- IE10-Anzeigefenster-Hack für Fehler auf Surface und Desktop-Windows-8 -->
-    <script type="text/javascript" src="spiel.js"></script>
+    <script type="text/javascript" src="client.js"></script>
+    <!-- Für die Websockets -->
+
 </html>
