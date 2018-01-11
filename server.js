@@ -1,19 +1,19 @@
-var express = require('express');
+var express = require("express");
 var app     = express();
 const port = 3000;
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 var server  = app.listen(port, function(){
-  console.log("Server started on port" + port)
+    console.log("Server started on port" + port);
 });
-var io      = require('socket.io').listen(server);
+var io      = require("socket.io").listen(server);
 var path = require("path");
 
-var highscore = require('./routes/highscore');
-var game = require('./routes/game')(io);
+var highscore = require("./routes/highscore");
+var game = require("./routes/game")(io);
 
 
 // statische Elemente ausliefern
-app.use(express.static(path.join(__dirname, '/static')));
+app.use(express.static(path.join(__dirname, "/static")));
 
 // Router verwenden
 app.use("/api/highscore", highscore);
@@ -22,14 +22,14 @@ app.use("/api", game);
 app.use(bodyParser.json());
 
 // localhost:3000 erscheint Seite
-app.get('/', function(req, res){
-res.sendFile(__dirname + '/static/schiffeVersenken.html');
+app.get("/", function(req, res){
+    res.sendFile(__dirname + "/static/schiffeVersenken.html");
 });
 
-io.on('connection', function(socket){
-   // a user has visited our page
-  console.log('a user connected');
-  socket.on('disconnect', function() {
-    console.log('a user disconnected');
-  });
+io.on("connection", function(socket){
+    // a user has visited our page
+    console.log("a user connected");
+    socket.on("disconnect", function() {
+        console.log("a user disconnected");
+    });
 });
