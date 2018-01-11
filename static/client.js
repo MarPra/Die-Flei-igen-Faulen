@@ -230,15 +230,15 @@ function saveName(){
     document.getElementById("headSp1").innerHTML = playerName;
 }
 
-function showHighscore(highscores){
+function showHighscore(highscoreArray){
     let highscore = document.getElementById("Highscore");
-    if(highscores.length == 0) {
+    if(highscoreArray.length == 0) {
         highscore.innerHTML = "Noch kein Highscore verfügbar";
     }
 
-    for(let i = 0; i < highscores.length; i++){
+    for(let i = 0; i < highscoreArray.length; i++){
       let score = document.createElement("p");
-      score.innerHTML = i+1 + "." + highscores[i].name + "  " + highscores[i].points;
+      score.innerHTML = i+1 + "." + highscoreArray[i].name + "  " + highscoreArray[i].points;
       let br = document.createElement("br");
       score.appendChild(br);
       highscore.appendChild(score);
@@ -256,7 +256,7 @@ function getHighscore(){
       if (this.readyState == 4 && this.status == 200) {
           console.log("Gut gegangen");
           console.log(xhr.response);
-          showHighscore(getBestScores(xhr.response),5);
+          showHighscore(getBestScores(xhr.response,5));
       } else{
         console.log("Schief gegangen");
       }
@@ -265,10 +265,17 @@ function getHighscore(){
 }
 
 function getBestScores(highscores, nr) {
-//TODO: die Besten 5 Ergebnisse anzeigen
-  //highscores.sort();
   console.log(highscores);
-  return highscores;
+  highscores.sort(function(a,b){
+    return a.points-b.points;
+  });
+
+  let bestResults = [];
+
+  for(let i = 0; i < nr && i < highscores.length; i++){
+    bestResults.push(highscores[i]);
+  }
+  return bestResults;
 }
 
 function setHighscore(){
