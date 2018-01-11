@@ -8,13 +8,12 @@ const WATER = 0;
 const SHIP = 1;
 const MISSED_SHOOT = -1;
 const HIT = 2;
-const SUNK = 3;
-let socket =  io();
+const socket =  io();
+const playerID = getRandomInt(1000, 999999);
 let shootsCounter = 0;
-let tableHeadArray = ["#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+const tableHeadArray = ["#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 let myBoard = createField();
-let opponentField = createField();
-let playerID = getRandomInt(1000, 999999);
+let opponentBoard = createField();
 let myTurn;
 let myTable = document.getElementById("spielfeldEigen");
 let opponentTable = document.getElementById("spielfeldGegner");
@@ -36,6 +35,7 @@ console.log(playerID);
 function initalize(){
     inGame = true;
     getHighscore();
+  //  setHighscore();
     setShipsRandomly(myBoard);
     setPlayerID();
     initalizeGameAndPlayer();
@@ -95,19 +95,19 @@ function initalizeGameAndPlayer(){
     socket.on("initalizeGameAndPlayer", function (data){
         console.log(data.id1);
         if(data.id1 == playerID){
-            opponentField = data.board2;
+            opponentBoard = data.board2;
             console.log("Player1");
             console.log(myBoard);
-            console.log(opponentField);
+            console.log(opponentBoard);
             myTurn = true;
             console.log(myTurn);
         }else if(data.id2 == playerID){
             console.log(data.id2);
-            opponentField = data.board1;
+            opponentBoard = data.board1;
             console.log("Player2");
             myTurn = false;
             console.log(myBoard);
-            console.log(opponentField);
+            console.log(opponentBoard);
             console.log(myTurn);
         }
         updateOpponentTable();
@@ -123,29 +123,22 @@ function shoot(posX, posY){
     shootsCounter++;
     console.log(shootsCounter);
     console.log(posX + ", " + "" +posY);
-    if(opponentField[posX][posY] == SHIP){
-        opponentField[posX][posY] = HIT;
+    if(opponentBoard[posX][posY] == SHIP){
+        opponentBoard[posX][posY] = HIT;
         myTurn = true;
     }else{
-        opponentField[posX][posY] = MISSED_SHOOT;
+        opponentBoard[posX][posY] = MISSED_SHOOT;
         myTurn = false;
         turnChange();
     }
-    console.log(opponentField);
-    socket.emit("setBoard", {id: playerID, board: opponentField});
+    console.log(opponentBoard);
+    socket.emit("setBoard", {id: playerID, board: opponentBoard});
     updateOpponentTable();
 }
 
 
 function updateMyTable(){
-    console.log(myTurn);
-    if(myTurn){
-        document.getElementById("headSp1").setAttribute("style", "color: red");
-        document.getElementById("headSp2").setAttribute("style", "color: black");
-    }else{
-        document.getElementById("headSp1").setAttribute("style", "color: black");
-        document.getElementById("headSp2").setAttribute("style", "color: red");
-    }
+    renderCurrentPlayer();
     document.getElementById("currentShoots").innerHTML = shootsCounter;
     myTable.innerHTML = "";
     renderTableHead(myTable);
@@ -157,24 +150,33 @@ function updateMyTable(){
         rowElement.appendChild(rowHead);
         myTable.appendChild(rowElement);
         for (let column = 0; column < COLUMNS; column++) {
-            let columnElement = document.createElement("td");
-
+          let field = document.createElement("td");
             if(myBoard[column][row] == SHIP){
-                columnElement.setAttribute("style", "border: 3px solid blue;");
+                field.setAttribute("style", "border: 3px solid blue");
             }
             if(myBoard[column][row] == HIT){
-                columnElement.setAttribute("style", "border: 3px solid red;");
+                field.setAttribute("style", "border: 3px solid red");
             }
             if(myBoard[column][row] == MISSED_SHOOT){
-                columnElement.innerHTML = "x";
+                field.innerHTML = "x";
             }
-            rowElement.appendChild(columnElement);
+            rowElement.appendChild(field);
         }
     }
 }
 
 function turnChange(){
     socket.emit("turnChange", {id: playerID});
+}
+
+function renderCurrentPlayer(){
+  if(myTurn){
+      document.getElementById("headSp1").setAttribute("style", "color: red");
+      document.getElementById("headSp2").setAttribute("style", "color: black");
+  }else{
+      document.getElementById("headSp1").setAttribute("style", "color: black");
+      document.getElementById("headSp2").setAttribute("style", "color: red");
+  }
 }
 
 function updateOpponentTable(){
@@ -188,20 +190,19 @@ function updateOpponentTable(){
         rowElement.appendChild(rowHead);
         opponentTable.appendChild(rowElement);
         for (let column = 0; column < COLUMNS; column++){
-            let columnElement = document.createElement("td");
-            columnElement.setAttribute("id", column+""+row);
-            if(opponentField[column][row] == HIT){
-                columnElement.setAttribute("style" , "border: 3px solid green;");
+            let field = document.createElement("td");
+            if(opponentBoard[column][row] == HIT){
+                field.setAttribute("style" , "border: 3px solid green;");
             }
-            if(opponentField[column][row] == MISSED_SHOOT){
-                columnElement.innerHTML = "-";
+            if(opponentBoard[column][row] == MISSED_SHOOT){
+                field.innerHTML = "-";
             }
             if(myTurn){
-                if(opponentField[column][row] == WATER || opponentField[column][row] == SHIP){
-                    columnElement.setAttribute("onclick" , "shoot("+  column+"," +  row+ ")");
+                if(opponentBoard[column][row] == WATER || opponentBoard[column][row] == SHIP){
+                    field.setAttribute("onclick" , "shoot("+  column+"," +  row+ ")");
                 }
             }
-            rowElement.appendChild(columnElement);
+            rowElement.appendChild(field);
         }
     }
 }
@@ -230,15 +231,17 @@ function saveName(){
 }
 
 function showHighscore(highscores){
-    var highscore = document.getElementById("Highscore");
+    let highscore = document.getElementById("Highscore");
     if(highscores.length == 0) {
-        highscore.innerHTML = "Hier wird der Highscore geladen";
+        highscore.innerHTML = "Noch kein Highscore verfügbar";
     }
 
-    for(let i; i < highscores.length; i++){
-        highscore.innerHTML = highscores[i].name + "   " + highscores[i].points;
-        let br = document.createElement("br");
-        highscore.appendChild(br);
+    for(let i = 0; i < highscores.length; i++){
+      let score = document.createElement("p");
+      score.innerHTML = i+1 + "." + highscores[i].name + "  " + highscores[i].points;
+      let br = document.createElement("br");
+      score.appendChild(br);
+      highscore.appendChild(score);
     }
 
 }
@@ -247,34 +250,38 @@ function showHighscore(highscores){
 function getHighscore(){
     console.log("updateHighscore");
     var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            console.log("Gut gegangen");
-            document.getElementById("Highscore").innerHTML = "Hallo";
-        }
+    xhr.open("GET", apiURL + "highscore", true);
+    xhr.responseType = "json";
+    xhr.onload = function(){
+      if (this.readyState == 4 && this.status == 200) {
+          console.log("Gut gegangen");
+          console.log(xhr.response);
+          showHighscore(getBestScores(xhr.response),5);
+      } else{
+        console.log("Schief gegangen");
+      }
     };
-    xhr.open("GET", "http://127.0.0.1:3000/api/highscore", true);
     xhr.send();
 }
 
-function getBestHighscores(highscores, nr) {
-    highscores.sort(function(a, b){return a.points - b.points;});
+function getBestScores(highscores, nr) {
+//TODO: die Besten 5 Ergebnisse anzeigen
+  //highscores.sort();
+  console.log(highscores);
+  return highscores;
+}
 
-    let best = [];
-    let last;
-
-    for(let i = 0; i < highscores.length && i < nr; i++) {
-        best.push(highscores[i]);
-        last = highscores[i];
+function setHighscore(){
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", apiURL + "highscore", true);
+  xhr.onload = function(){
+    if (this.readyState == 4 && this.status == 200) {
+        console.log("Gut gegangen");
+    } else{
+      console.log("Schief gegangen");
     }
-
-    for(let i = nr; i < highscores.length; i++) {
-        if(highscores[i].points == last.points) {
-            best.push(highscores[i]);
-        }
-    }
-
-    return best;
+  };
+  xhr.send({"name": "Test", "points":90});
 }
 
 

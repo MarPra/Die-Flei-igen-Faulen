@@ -3,25 +3,24 @@ const router = express.Router();
 const fs = require("fs");
 
 router.get("/", (req, res) => {
-    console.log("GET FUNCTION");
     // Read Highscores
-    fs.readFile("files/highscore.json", "utf8", function(err, data){
-        console.log("read File");
+    fs.readFile("routes/files/highscore.json", function(err, data){
         if(err) {
-            console.log("Error");
+            console.log(err);
             res.status(500);
             return;
         }
 
         // Return Highscores
         console.log("kein Error");
+        console.log(JSON.parse(data));
         res.status(200).json(JSON.parse(data));
     });
 });
 
 router.post("/", (req, res) => {
     // Read Highscores
-    fs.readFile("files/highscore.json", "utf8", (err, data) => {
+    fs.readFile("routes/files/highscore.json", function (err, data){
         if(err) {
             res.status(500);
             return;
@@ -37,7 +36,7 @@ router.post("/", (req, res) => {
         );
 
         // Write new Highscores
-        fs.writeFile("files/highscore.json", JSON.stringify(json), "utf8", (err) => {
+        fs.writeFile("routes/files/highscore.json", JSON.stringify(json), (err) => {
             if(err) {
                 res.status(500);
                 return;
