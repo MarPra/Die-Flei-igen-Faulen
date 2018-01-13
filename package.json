@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/MarPra/Die-Flei-igen-Faulen#readme",
   "dependencies": {
+    "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "mongojs": "^2.4.1",
     "socket.io": "^2.0.4"

@@ -1,25 +1,32 @@
-var express = require("express");
-var app     = express();
-const port = 3000;
+
+const express = require("express");
+const app     = express();
 const bodyParser = require("body-parser");
-var server  = app.listen(port, function(){
+const port = 3000;
+const path = require("path");
+const server  = app.listen(port, function(){
     console.log("Server started on port" + port);
 });
-var io      = require("socket.io").listen(server);
-var path = require("path");
+const io      = require("socket.io").listen(server);
+
 
 var highscore = require("./routes/highscore");
 var game = require("./routes/game")(io);
 
 
+
+
 // statische Elemente ausliefern
 app.use(express.static(path.join(__dirname, "/static")));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+
 
 // Router verwenden
 app.use("/api/highscore", highscore);
 app.use("/api", game);
 
-app.use(bodyParser.json());
+
 
 // localhost:3000 erscheint Seite
 app.get("/", function(req, res){

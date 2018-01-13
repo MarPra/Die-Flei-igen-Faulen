@@ -43,6 +43,8 @@ function initalize(){
     updateMyTable();
 }
 
+
+
 // Listener for Server Events to realize Realtime
 socket.on("whosTurn", function(data){
     console.log(data);
@@ -248,20 +250,28 @@ function showHighscore(highscoreArray){
 
 // TODO: Load Highscore from REST-API
 function getHighscore(){
-    console.log("updateHighscore");
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", apiURL + "highscore", true);
-    xhr.responseType = "json";
-    xhr.onload = function(){
-      if (this.readyState == 4 && this.status == 200) {
-          console.log("Gut gegangen");
-          console.log(xhr.response);
-          showHighscore(getBestScores(xhr.response,5));
-      } else{
-        console.log("Schief gegangen");
-      }
-    };
-    xhr.send();
+  $.ajax({
+			method: "GET",
+			dataType: "JSON",
+			url: apiURL + "highscore"
+		}).done((msg) => {
+      console.log(msg);
+			showHighscore(getBestScores(msg,5));
+});
+}
+
+function setHighscore(){
+  $.ajax({
+			type: "POST",
+			data: JSON.stringify({
+				"name": playerName,
+				"points": shootsCounter
+			}),
+			contentType: "application/json",
+			dataType: "JSON",
+			url: apiURL + "highscore",
+			success: console.log("Dein Highscore mit " + shootsCounter + " wurde erfolgreich gespeichert!")
+});
 }
 
 function getBestScores(highscores, nr) {
@@ -278,18 +288,7 @@ function getBestScores(highscores, nr) {
   return bestResults;
 }
 
-function setHighscore(){
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", apiURL + "highscore", true);
-  xhr.onload = function(){
-    if (this.readyState == 4 && this.status == 200) {
-        console.log("Gut gegangen");
-    } else{
-      console.log("Schief gegangen");
-    }
-  };
-  xhr.send({"name": "Test", "points":90});
-}
+
 
 
 function showPlayerModal(){
