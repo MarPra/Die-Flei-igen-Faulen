@@ -46,11 +46,6 @@ socket.on("opponentName", function(data){
 
 });
 
-socket.on("winner", function(){
-  view.showWinnerModal();
-  highscore.setHighscore();
-});
-
 socket.on("looser", function () {
   view.showLoserModal();
 });
@@ -78,6 +73,7 @@ socket.on("shootResult", function(data){
     myTurn = true;
     if(winner()){
       view.showWinnerModal();
+      highscore.setHighscore(playerName, shootsCounter);
       socket.emit("winner");
     }
   }else{

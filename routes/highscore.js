@@ -31,11 +31,7 @@ router.post("/", (req, res) => {
         console.log(json);
         // Add new Highscore
         console.log("REQ BODY");
-          console.log(req.body);
-          let name = req.params.name;
-          let points = req.params.points;
-          console.log(name);
-          console.log(points);
+        console.log(req.body);
         json.push(
             {
                 name: req.body.name,

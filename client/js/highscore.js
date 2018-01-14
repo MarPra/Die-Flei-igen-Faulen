@@ -14,17 +14,17 @@ class Highscore{
     });
   }
 
-  setHighscore(){
+  setHighscore(playerName, shoots){
     $.ajax({
   			type: "POST",
   			data: JSON.stringify({
   				"name": playerName,
-  				"score": shootsCounter
+  				"score": shoots
   			}),
   			contentType: "application/json",
   			dataType: "JSON",
   			url: apiURL + "highscore",
-  			success: this.getHighscore()
+  			success: alert("Highscore ist gespeichert")
   });
   }
 
