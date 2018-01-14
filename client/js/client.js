@@ -8,20 +8,19 @@ const WATER = 0;
 const SHIP = 1;
 const MISSED_SHOOT = -1;
 const HIT = 2;
+let myBoard = createField();
+let opponentBoard = createField();
+console.log(myBoard);
 const socket =  io();
 const playerID = getRandomInt(1000, 999999);
 let shootsCounter = 0;
-const tableHeadArray = ["#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
-let myBoard = createField();
-let opponentBoard = createField();
 let myTurn;
-let myTable = document.getElementById("spielfeldEigen");
-let opponentTable = document.getElementById("spielfeldGegner");
+const view = new View();
+const highscore = new Highscore();
 let inGame;
 let playerName;
 let opponentName;
 const apiURL = "http://localhost:3000/api/";
-
 let ships = [
     {name: "battleship" , length: 5, amount: 1},
     {name: "cruiser" , length: 4 , amount: 2},
@@ -29,18 +28,14 @@ let ships = [
     {name: "submarine" , length: 2 , amount: 4}
 ];
 
-console.log(playerID);
-
-
 function initalize(){
     inGame = true;
-    getHighscore();
-  //  setHighscore();
-    setShipsRandomly(myBoard);
+    highscore.getHighscore();
     setPlayerID();
+    setShipsRandomly(myBoard);
     initalizeGameAndPlayer();
-    showPlayerModal();
-    updateMyTable();
+    view.showPlayerModal();
+    view.updateTables(shootsCounter,myTurn, myBoard, opponentBoard);
 }
 
 
@@ -55,7 +50,7 @@ socket.on("whosTurn", function(data){
         myTurn= false;
         console.log(myTurn);
     }
-    updateOpponentTable();
+    view.updateTables(shootsCounter,myTurn, myBoard, opponentBoard);
 });
 
 socket.on("updateOwnBoard", function(data){
@@ -66,7 +61,7 @@ socket.on("updateOwnBoard", function(data){
         myBoard = data.board2;
         console.log(myBoard);
     }
-    updateMyTable();
+    view.updateTables(shootsCounter,myTurn, myBoard, opponentBoard);
 });
 
 socket.on("opponentName", function(data){
@@ -83,13 +78,16 @@ socket.on("opponentName", function(data){
 
 socket.on("winner", function(data){
     if(data.id == playerID){
-        showWinnerModal();
+        view.showWinnerModal();
         console.log("Gewonnen");
     }else{
-        showLoserModal();
+        view.showLoserModal();
         console.log("Verloren");
     }
+});
 
+socket.on("opponentDisconnected", function(){
+  view.showOpponentLeaveModal();
 });
 
 
@@ -98,22 +96,14 @@ function initalizeGameAndPlayer(){
         console.log(data.id1);
         if(data.id1 == playerID){
             opponentBoard = data.board2;
-            console.log("Player1");
-            console.log(myBoard);
-            console.log(opponentBoard);
             myTurn = true;
             console.log(myTurn);
         }else if(data.id2 == playerID){
-            console.log(data.id2);
             opponentBoard = data.board1;
-            console.log("Player2");
             myTurn = false;
-            console.log(myBoard);
-            console.log(opponentBoard);
             console.log(myTurn);
         }
-        updateOpponentTable();
-        updateMyTable();
+        view.updateTables(shootsCounter,myTurn, myBoard, opponentBoard);
     });
 }
 
@@ -135,172 +125,7 @@ function shoot(posX, posY){
     }
     console.log(opponentBoard);
     socket.emit("setBoard", {id: playerID, board: opponentBoard});
-    updateOpponentTable();
-}
-
-
-function updateMyTable(){
-    renderCurrentPlayer();
-    document.getElementById("currentShoots").innerHTML = shootsCounter;
-    myTable.innerHTML = "";
-    renderTableHead(myTable);
-    for (let row = 0; row < ROWS; row++) {
-        let rowElement = document.createElement("tr");
-        let rowHead = document.createElement("th");
-        rowHead.setAttribute("scope", "row");
-        rowHead.innerHTML = row;
-        rowElement.appendChild(rowHead);
-        myTable.appendChild(rowElement);
-        for (let column = 0; column < COLUMNS; column++) {
-          let field = document.createElement("td");
-            if(myBoard[column][row] == SHIP){
-                field.setAttribute("style", "border: 3px solid blue");
-            }
-            if(myBoard[column][row] == HIT){
-                field.setAttribute("style", "border: 3px solid red");
-            }
-            if(myBoard[column][row] == MISSED_SHOOT){
-                field.innerHTML = "x";
-            }
-            rowElement.appendChild(field);
-        }
-    }
-}
-
-function turnChange(){
-    socket.emit("turnChange", {id: playerID});
-}
-
-function renderCurrentPlayer(){
-  if(myTurn){
-      document.getElementById("headSp1").setAttribute("style", "color: red");
-      document.getElementById("headSp2").setAttribute("style", "color: black");
-  }else{
-      document.getElementById("headSp1").setAttribute("style", "color: black");
-      document.getElementById("headSp2").setAttribute("style", "color: red");
-  }
-}
-
-function updateOpponentTable(){
-    opponentTable.innerHTML = "";
-    renderTableHead(opponentTable);
-    for (let row = 0; row < ROWS; row++) {
-        let rowElement = document.createElement("tr");
-        let rowHead = document.createElement("th");
-        rowHead.setAttribute("scope", "row");
-        rowHead.innerHTML = row;
-        rowElement.appendChild(rowHead);
-        opponentTable.appendChild(rowElement);
-        for (let column = 0; column < COLUMNS; column++){
-            let field = document.createElement("td");
-            if(opponentBoard[column][row] == HIT){
-                field.setAttribute("style" , "border: 3px solid green;");
-            }
-            if(opponentBoard[column][row] == MISSED_SHOOT){
-                field.innerHTML = "-";
-            }
-            if(myTurn){
-                if(opponentBoard[column][row] == WATER || opponentBoard[column][row] == SHIP){
-                    field.setAttribute("onclick" , "shoot("+  column+"," +  row+ ")");
-                }
-            }
-            rowElement.appendChild(field);
-        }
-    }
-}
-
-function renderTableHead(table){
-    let tableHead = document.createElement("thead");
-    let rowElement = document.createElement("tr");
-    table.appendChild(tableHead);
-    tableHead.appendChild(rowElement);
-    for(let i = 0; i < tableHeadArray.length ; i++){
-        let th = document.createElement("th");
-        th.innerHTML = tableHeadArray[i];
-        th.setAttribute("scope","col");
-        rowElement.appendChild(th);
-    }
-}
-
-function setBoard(){
-    socket.emit("setBoard",{board: myBoard});
-}
-
-function saveName(){
-    playerName = document.getElementById("player").value;
-    socket.emit("saveName", {id: playerID, name: playerName});
-    document.getElementById("headSp1").innerHTML = playerName;
-}
-
-function showHighscore(highscoreArray){
-    let highscore = document.getElementById("Highscore");
-    if(highscoreArray.length == 0) {
-        highscore.innerHTML = "Noch kein Highscore verfügbar";
-    }
-
-    for(let i = 0; i < highscoreArray.length; i++){
-      let score = document.createElement("p");
-      score.innerHTML = i+1 + "." + highscoreArray[i].name + "  " + highscoreArray[i].points;
-      let br = document.createElement("br");
-      score.appendChild(br);
-      highscore.appendChild(score);
-    }
-
-}
-
-// TODO: Load Highscore from REST-API
-function getHighscore(){
-  $.ajax({
-			method: "GET",
-			dataType: "JSON",
-			url: apiURL + "highscore"
-		}).done((msg) => {
-      console.log(msg);
-			showHighscore(getBestScores(msg,5));
-});
-}
-
-function setHighscore(){
-  $.ajax({
-			type: "POST",
-			data: JSON.stringify({
-				"name": playerName,
-				"points": shootsCounter
-			}),
-			contentType: "application/json",
-			dataType: "JSON",
-			url: apiURL + "highscore",
-			success: console.log("Dein Highscore mit " + shootsCounter + " wurde erfolgreich gespeichert!")
-});
-}
-
-function getBestScores(highscores, nr) {
-  console.log(highscores);
-  highscores.sort(function(a,b){
-    return a.points-b.points;
-  });
-
-  let bestResults = [];
-
-  for(let i = 0; i < nr && i < highscores.length; i++){
-    bestResults.push(highscores[i]);
-  }
-  return bestResults;
-}
-
-
-
-
-function showPlayerModal(){
-    $("#spielerEingabe").modal("show");
-}
-
-function showWinnerModal(){
-    $("#WinnerModal").modal("show");
-}
-
-function showLoserModal(){
-    $("#LooserModal").modal("show");
+    view.updateTables(shootsCounter,myTurn, myBoard, opponentBoard);
 }
 
 function createField (){
@@ -322,7 +147,6 @@ function setShipsRandomly(field){
     for(let i = 0; i < ships.length; i++){
         for(let j = 0; j < ships[i].amount; j++){
             while(!setShip(field, ships[i])){
-                console.log(ships[i].name);
             }
         }
     }
@@ -408,6 +232,20 @@ function checkField(field, posX, posY) {
         return true;
     }
     return false;
+}
+
+function turnChange(){
+    socket.emit("turnChange", {id: playerID});
+}
+
+function setBoard(){
+    socket.emit("setBoard",{board: myBoard});
+}
+
+function saveName(){
+    playerName = document.getElementById("player").value;
+    socket.emit("saveName", {id: playerID, name: playerName});
+    document.getElementById("headSp1").innerHTML = playerName;
 }
 
 function getRandomInt(min, max) {

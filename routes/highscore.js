@@ -8,7 +8,7 @@ router.get("/", (req, res) => {
     fs.readFile("routes/files/highscore.json", function(err, data){
         if(err) {
             console.log(err);
-            res.status(500);
+            res.send(err);
             return;
         }
         // Return Highscores

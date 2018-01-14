@@ -17,7 +17,7 @@ var game = require("./routes/game")(io);
 
 
 // statische Elemente ausliefern
-app.use(express.static(path.join(__dirname, "/static")));
+app.use(express.static(path.join(__dirname, "/client")));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -30,13 +30,21 @@ app.use("/api", game);
 
 // localhost:3000 erscheint Seite
 app.get("/", function(req, res){
-    res.sendFile(__dirname + "/static/schiffeVersenken.html");
+    res.sendFile(__dirname + "/client/schiffeVersenken.html");
 });
 
+app.get("/*", (req, res) => {
+	res.status(404).sendFile(__dirname + '/client/404.html');
+});
+
+let players = [];
+
 io.on("connection", function(socket){
+  players.push(socket);
     // a user has visited our page
     console.log("a user connected");
     socket.on("disconnect", function() {
+      io.sockets.emit("opponentDisconnected");
         console.log("a user disconnected");
     });
 });
