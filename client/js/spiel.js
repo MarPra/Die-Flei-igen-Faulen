@@ -3,18 +3,18 @@
 
 
 function showWinnerModal(winner){
-  $("#WinnerModal").modal('show');
+    $("#WinnerModal").modal("show");
 }
 
 function showDisconnectedModal(){
-  socket.on('disconnect', function(){
-    $("#DisconnectedModal").modal('show');
-  });
+    socket.on("disconnect", function(){
+        $("#DisconnectedModal").modal("show");
+    });
 }
 
 //----------------------------GAME LOGIC----------------------------------------
 
-	/*
+/*
 	Ship placement
 
 	Ships are placed from left to right, in detail from x to x + ship.length
