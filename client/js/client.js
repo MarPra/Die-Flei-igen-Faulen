@@ -1,16 +1,6 @@
 //----------------------------GLOBAL VARIABLES---------------------------------
-
-const HORIZONTAL = 1;
-const VERTICAL = 0;
-const ROWS = 10;
-const COLUMNS = 10;
-const WATER = 0;
-const SHIP = 1;
-const MISSED_SHOOT = -1;
-const HIT = 2;
 let myBoard = createField();
 let opponentBoard = createField();
-console.log(myBoard);
 const socket =  io();
 const playerID = getRandomInt(1000, 999999);
 let shootsCounter = 0;
@@ -20,7 +10,7 @@ const highscore = new Highscore();
 let inGame;
 let playerName;
 let opponentName;
-const apiURL = "http://localhost:3000/api/";
+
 let ships = [
     {name: "battleship" , length: 5, amount: 1},
     {name: "cruiser" , length: 4 , amount: 2},
@@ -31,102 +21,103 @@ let ships = [
 function initalize(){
     inGame = true;
     highscore.getHighscore();
-    setPlayerID();
+    setPlayerInformation();
     setShipsRandomly(myBoard);
-    initalizeGameAndPlayer();
     view.showPlayerModal();
     view.updateTables(shootsCounter,myTurn, myBoard, opponentBoard);
 }
 
-
+//-----------------------SERVER LISTENER ----------------------------
 
 // Listener for Server Events to realize Realtime
-socket.on("whosTurn", function(data){
-    console.log(data);
-    if(data.id == playerID){
-        myTurn = true;
-        console.log(myTurn);
-    }else{
-        myTurn= false;
-        console.log(myTurn);
-    }
-    view.updateTables(shootsCounter,myTurn, myBoard, opponentBoard);
-});
-
-socket.on("updateOwnBoard", function(data){
-    if(data.id1 == playerID){
-        myBoard = data.board1;
-        console.log(myBoard);
-    }else if(data.id2 == playerID){
-        myBoard = data.board2;
-        console.log(myBoard);
-    }
-    view.updateTables(shootsCounter,myTurn, myBoard, opponentBoard);
+socket.on("beginner", function(data){
+  myTurn = data;
+  console.log(myTurn);
+  view.updateTables(shootsCounter, myTurn, myBoard, opponentBoard);
 });
 
 socket.on("opponentName", function(data){
-    if(data.name1 == playerName){
-        opponentName = data.name2;
-    }else if(data.name2 == playerName){
-        opponentName = data.name1;
-    }
-    if(opponentName !== "undefined"){
+    opponentName = data.name;
+    if(typeof opponentName === "undefined"){
+      document.getElementById("headSp2").innerHTML = "Waiting for Player";
+    }else{
         document.getElementById("headSp2").innerHTML = opponentName;
     }
+
 });
 
+socket.on("winner", function(){
+  view.showWinnerModal();
+  highscore.setHighscore();
+});
 
-socket.on("winner", function(data){
-    if(data.id == playerID){
-        view.showWinnerModal();
-        console.log("Gewonnen");
-    }else{
-        view.showLoserModal();
-        console.log("Verloren");
+socket.on("looser", function () {
+  view.showLoserModal();
+});
+
+function setPlayerInformation(){
+  socket.emit("setPlayerInformation", {id: playerID, name: playerName,board: myBoard});
+}
+
+function shoot(posX, posY){
+  let hit;
+  shootsCounter++;
+  console.log(posX + ", " + posY);
+  socket.emit("shoot", {x: posX, y: posY});
+  view.updateTables(shootsCounter,myTurn, myBoard, opponentBoard);
+}
+
+socket.on("shootResult", function(data){
+  console.log("shootResult");
+  hit = data.val;
+  posX = data.x;
+  posY = data.y;
+  console.log(hit);
+  if(hit){
+    opponentBoard[posX][posY] = HIT;
+    myTurn = true;
+    if(winner()){
+      view.showWinnerModal();
+      socket.emit("winner");
     }
+  }else{
+    opponentBoard[posX][posY] = MISSED_SHOOT;
+    myTurn = false;
+  }
+  view.updateTables(shootsCounter,myTurn, myBoard, opponentBoard);
+});
+
+socket.on("opponentShoot", function(data){
+  let posX = data.x;
+  let posY = data.y;
+  console.log("opponentShoot");
+  if(data.val){
+    myBoard[posX][posY] = HIT;
+    myTurn = false;
+  }else{
+    myBoard[posX][posY] = MISSED_SHOOT;
+    myTurn = true;
+  }
+  view.updateTables(shootsCounter,myTurn, myBoard, opponentBoard);
 });
 
 socket.on("opponentDisconnected", function(){
   view.showOpponentLeaveModal();
 });
 
-
-function initalizeGameAndPlayer(){
-    socket.on("initalizeGameAndPlayer", function (data){
-        console.log(data.id1);
-        if(data.id1 == playerID){
-            opponentBoard = data.board2;
-            myTurn = true;
-            console.log(myTurn);
-        }else if(data.id2 == playerID){
-            opponentBoard = data.board1;
-            myTurn = false;
-            console.log(myTurn);
-        }
-        view.updateTables(shootsCounter,myTurn, myBoard, opponentBoard);
-    });
-}
-
-function setPlayerID(){
-    socket.emit("setPlayerID", {id: playerID, name: playerName,board: myBoard});
-}
-
-function shoot(posX, posY){
-    shootsCounter++;
-    console.log(shootsCounter);
-    console.log(posX + ", " + "" +posY);
-    if(opponentBoard[posX][posY] == SHIP){
-        opponentBoard[posX][posY] = HIT;
-        myTurn = true;
-    }else{
-        opponentBoard[posX][posY] = MISSED_SHOOT;
-        myTurn = false;
-        turnChange();
+function winner(){
+  let hitCounter = 0;
+  for(let i = 0; i < ROWS; i++){
+    for (let j = 0; j < COLUMNS; j++){
+      if(opponentBoard[i][j] == HIT){
+        hitCounter++;
+      }
     }
-    console.log(opponentBoard);
-    socket.emit("setBoard", {id: playerID, board: opponentBoard});
-    view.updateTables(shootsCounter,myTurn, myBoard, opponentBoard);
+  }
+  return hitCounter == 30;
 }
+
+//-------------------------SHIP FUNCTIONS-------------------------------
 
 function createField (){
     return [
@@ -234,19 +225,13 @@ function checkField(field, posX, posY) {
     return false;
 }
 
-function turnChange(){
-    socket.emit("turnChange", {id: playerID});
-}
-
-function setBoard(){
-    socket.emit("setBoard",{board: myBoard});
-}
-
 function saveName(){
     playerName = document.getElementById("player").value;
-    socket.emit("saveName", {id: playerID, name: playerName});
+    socket.emit("saveName", {name: playerName});
     document.getElementById("headSp1").innerHTML = playerName;
 }
+
+//---------------HELPER FUNCTION----------------------
 
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;

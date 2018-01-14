@@ -9,91 +9,78 @@ module.exports= function(io){
     const ROWS = 10;
     const COLUMNS = 10;
 
-    let board1;
-    let board2;
-    let player1 = "undefined";
-    let player2 = "undefined";
-    let playerName1;
-    let playerName2;
-    let currentPlayer;
+    let playerNames = [];
+    let playerIDs = [];
+    let playerBoards = [];
+    let playerSockets = [];
 
     io.on("connection", function(socket){
+      playerSockets.push(socket);
+      let socketIndex = playerSockets.indexOf(socket);
 
-        socket.on("setPlayerID", function(data){
-            if(player1 === "undefined"){
-                player1 = data.id;
-                board1 = data.board;
-                console.log(board1);
-            }else if(player2 === "undefined"){
-                player2 = data.id;
-                board2 = data.board;
-                console.log(board2);
-                io.sockets.emit("initalizeGameAndPlayer", {id1: player1, id2: player2, board1: board1, board2: board2});
-            }
-
+        socket.on("setPlayerInformation", function(data){
+          playerIDs[socketIndex] = data.id;
+          playerBoards[socketIndex] = data.board;
+          // Inform who begins
+          if(socketIndex % 2 == 1){
+            playerSockets[socketIndex].emit("beginner", false);
+            playerSockets[socketIndex-1].emit("beginner", true);
+          }
+          // Inform about the other playerName
+          if(socketIndex % 2 == 1){
+            playerSockets[socketIndex].emit("opponentName", {name: playerNames[socketIndex-1]});
+          }else{
+              playerSockets[socketIndex].emit("opponentName", {name: playerNames[socketIndex+1]});
+          }
         });
 
-        socket.on("setBoard", function(data){
+    socket.on("shoot", function(data){
+          if(socketIndex % 2 == 0){
             console.log(data);
-            if(data.id == player1){
-                board2 = data.board;
-            }else if (data.id == player2){
-                board1 = data.board;
-            }
-            io.sockets.emit("updateOwnBoard", {id1: player1, id2: player2, board1: board1, board2: board2});
+            let hit = checkShoot(data.x, data.y,playerBoards[socketIndex+1]);
+            playerSockets[socketIndex].emit("shootResult", {x: data.x,y: data.y, val: hit});
+            playerSockets[socketIndex+1].emit("opponentShoot",{x: data.x,y: data.y, val: hit});
+          }else{
+            let hit = checkShoot(data.x, data.y,playerBoards[socketIndex-1]);
+            playerSockets[socketIndex].emit("shootResult", {x: data.x,y: data.y, val: hit});
+            playerSockets[socketIndex-1].emit("opponentShoot",{x: data.x,y: data.y, val: hit});
+          }
+  });
 
-            // Player 1 won
-            if(winner(board2)){
-                io.sockets.emit("winner",{id: player1});
-            }
-            // Player2 won
-            if(winner(board1)){
-                io.sockets.emit("winner",{id: player2});
-            }
-
-        });
-
-        socket.on("turnChange", function(data){
-            console.log("turnChange");
-            if(data.id == player1){
-                currentPlayer = player2;
-                console.log("Player2 turn");
-            }if(data.id == player2){
-                currentPlayer = player1;
-                console.log("Player1 turn");
-            }
-            io.sockets.emit("whosTurn", {id: currentPlayer});
-        });
-        socket.on("saveName", function(data){
-            if(data.id == player1){
-                playerName1 = data.name;
-            }else if(data.id == player2){
-                playerName2 = data.name;
-            }
-            if(playerName1 !== "undefined" && playerName2 !== "undefined"){
-                io.sockets.emit("opponentName", {name1: playerName1, name2: playerName2});
-            }
-        });
+      socket.on("saveName", function(data){
+          playerNames[socketIndex] = data.name;
+          if(socketIndex % 2 == 1){
+            playerSockets[socketIndex].emit("opponentName", {name: playerNames[socketIndex -1]});
+            playerSockets[socketIndex-1].emit("opponentName", {name: playerNames[socketIndex]});
+          }
     });
+    socket.on("winner", function (){
+      if(socketIndex % 2 == 0){
+        playerSockets[socketIndex+1].emit("looser");
+      }else{
+        playerSockets[socketIndex-1].emit("looser");
+      }
+    });
+
+
+  });
 
     function checkBoard(board, posX, posY){
         if(board[posX][posY] == SHIP){
+          board[posX][posY] = HIT;
             return true;
         }else{
+          board[posX][posY] = MISSED_SHOOT;
             return false;
         }
     }
 
-    // check if all ships at the opponent Board are hitted
-    function winner(board){
-        for(let i = 0; i < COLUMNS; i++){
-            for(let j = 0; j < ROWS; j++){
-                if(board[i][j] == SHIP){
-                    return false;
-                }
-            }
-        }
+    function checkShoot(posX, posY, board){
+      if(board[posX][posY] == SHIP){
         return true;
+      }else{
+        return false;
+      }
     }
 
     return router;

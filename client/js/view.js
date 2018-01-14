@@ -1,7 +1,3 @@
-let myTable = document.getElementById("spielfeldEigen");
-let opponentTable = document.getElementById("spielfeldGegner");
-const tableHeadArray = ["#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
-
 class View {
 
 

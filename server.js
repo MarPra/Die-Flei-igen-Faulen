@@ -37,14 +37,22 @@ app.get("/*", (req, res) => {
 	res.status(404).sendFile(__dirname + '/client/404.html');
 });
 
-let players = [];
+var players = [];
 
 io.on("connection", function(socket){
   players.push(socket);
     // a user has visited our page
     console.log("a user connected");
     socket.on("disconnect", function() {
-      io.sockets.emit("opponentDisconnected");
+      let socketIndex = players.indexOf(socket);
+      if(socketIndex % 2 == 0){
+        if(!(typeof players[socketIndex+1] === 'undefined'))
+        players[socketIndex+1].emit("opponentDisconnected");
+      }
+      if(socketIndex % 2 == 1){
+        if(!(typeof players[socketIndex-1] === 'undefined'))
+        players[socketIndex-1].emit("opponentDisconnected");
+      }
         console.log("a user disconnected");
     });
 });

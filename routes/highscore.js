@@ -39,7 +39,7 @@ router.post("/", (req, res) => {
         json.push(
             {
                 name: req.body.name,
-                points: req.body.points
+                score: req.body.score
             }
         );
 

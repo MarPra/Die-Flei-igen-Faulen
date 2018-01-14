@@ -24,8 +24,7 @@ class Highscore{
   			contentType: "application/json",
   			dataType: "JSON",
   			url: apiURL + "highscore",
-  			success: this.getHighscore(),
-        error: this.showHighscoreError()
+  			success: this.getHighscore()
   });
   }
 
@@ -45,6 +44,7 @@ class Highscore{
 
   showHighscore(highscoreArray){
       let highscore = document.getElementById("Highscore");
+      highscore.innerHTML = "";
       if(highscoreArray.length == 0) {
           highscore.innerHTML = "Kein Highscore verfügbar";
       }
