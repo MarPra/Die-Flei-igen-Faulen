@@ -4,7 +4,7 @@ const app     = express();
 const bodyParser = require("body-parser");
 const port = 3000;
 const path = require("path");
-const server  = app.listen(port, function(){
+const server  = app.listen(port , function(){
     console.log("Server started on port" + port);
 });
 const io      = require("socket.io").listen(server);
