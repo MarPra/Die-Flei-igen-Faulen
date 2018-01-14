@@ -13,46 +13,45 @@ const io      = require("socket.io").listen(server);
 var highscore = require("./routes/highscore");
 var game = require("./routes/game")(io);
 
-
-
-
-// statische Elemente ausliefern
-app.use(express.static(path.join(__dirname, "/client")));
+// body parser useing
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
 
+// static elements
+app.use(express.static(path.join(__dirname, "/client")));
 
 // Router verwenden
 app.use("/api/highscore", highscore);
 app.use("/api", game);
 
-
-
-// localhost:3000 erscheint Seite
+// first page
 app.get("/", function(req, res){
     res.sendFile(__dirname + "/client/schiffeVersenken.html");
 });
 
+//page that doesn't exist
 app.get("/*", (req, res) => {
-	res.status(404).sendFile(__dirname + '/client/404.html');
+    res.status(404).sendFile(__dirname + "/client/404.html");
 });
 
+// save all players
 var players = [];
 
 io.on("connection", function(socket){
-  players.push(socket);
-    // a user has visited our page
+// an new player connected
+    players.push(socket);
     console.log("a user connected");
     socket.on("disconnect", function() {
-      let socketIndex = players.indexOf(socket);
-      if(socketIndex % 2 == 0){
-        if(!(typeof players[socketIndex+1] === 'undefined'))
-        players[socketIndex+1].emit("opponentDisconnected");
-      }
-      if(socketIndex % 2 == 1){
-        if(!(typeof players[socketIndex-1] === 'undefined'))
-        players[socketIndex-1].emit("opponentDisconnected");
-      }
+        // in every game is one player with a even index in the array and an odd index
+        let socketIndex = players.indexOf(socket);
+        // one socket disconnect and the oppoent get the information
+        if(socketIndex % 2 == 0){
+            if(!(typeof players[socketIndex+1] === "undefined"))
+                players[socketIndex+1].emit("opponentDisconnected");
+        }
+        if(socketIndex % 2 == 1){
+            if(!(typeof players[socketIndex-1] === "undefined"))
+                players[socketIndex-1].emit("opponentDisconnected");
+        }
         console.log("a user disconnected");
     });
 });

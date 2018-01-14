@@ -12,15 +12,13 @@ router.get("/", (req, res) => {
             return;
         }
         // Return Highscores
-        console.log("kein Error");
-        console.log(JSON.parse(data));
         res.status(200).json(JSON.parse(data));
     });
 });
 
 router.post("/", (req, res) => {
-  console.log(req);
-    // Read Highscores
+    console.log(req);
+    // Read old Highscores
     fs.readFile("routes/files/highscore.json", function (err, data){
         if(err) {
             res.status(500);
@@ -30,8 +28,6 @@ router.post("/", (req, res) => {
 
         console.log(json);
         // Add new Highscore
-        console.log("REQ BODY");
-        console.log(req.body);
         json.push(
             {
                 name: req.body.name,
@@ -44,7 +40,6 @@ router.post("/", (req, res) => {
         // Write new Highscores
         fs.writeFile("routes/files/highscore.json", JSON.stringify(json), (err) => {
             if(err) {
-              console.log("Error");
                 res.status(500);
                 return;
             }
